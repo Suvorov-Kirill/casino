@@ -5,53 +5,39 @@ import (
 	"fmt"
 	"html/template"
 	_ "log"
+	"math/rand"
 	"net/http"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
-	"golang.org/x/crypto/bcrypt"
 )
 
-func registerHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		tmpl, _ := template.ParseFiles("templates/register.html")
-		tmpl.Execute(w, nil)
+// обработчик главной страницы
+func indexHandler(w http.ResponseWriter, _ *http.Request) {
+	tmpl, err := template.ParseFiles("templates/index.html")
+	if err != nil {
+		http.Error(w, "Шаблон главной страницы не найден", http.StatusInternalServerError)
 		return
 	}
 
-	if r.Method == http.MethodPost {
-		username := r.FormValue("username")
-		password := r.FormValue("password")
-
-		// Хэшируем пароль
-		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-
-		// Добавляем пользователя
-		_, err := db.Exec("INSERT INTO users (username, password, coins) VALUES (?, ?, ?)",
-			username, string(hashedPassword), 100, // начальный баланс
-		)
-
-		if err != nil {
-			fmt.Fprintln(w, "Ошибка: пользователь с таким именем уже существует")
-			return
-		}
-
-		fmt.Fprintln(w, "Регистрация успешна! Теперь можете войти.")
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		http.Error(w, "Ошибка выполнения", http.StatusInternalServerError)
+		return
 	}
 }
 
-func profileHandler(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("user_id")
+// обработчик кнопки "Играть"
+
+func playHandler(w http.ResponseWriter, _ *http.Request) {
+	rand.Seed(time.Now().UnixNano())
+	result := "Проигрыш 😢"
+	if rand.Intn(2) == 0 {
+		result = "Победа 🎉"
+	}
+	_, err := fmt.Fprintln(w, result)
 	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		http.Error(w, "Ошибка вывода ответа", http.StatusInternalServerError)
 		return
 	}
-
-	userID := cookie.Value
-
-	var username string
-	var coins int
-	db.QueryRow("SELECT username, coins FROM users WHERE id = ?", userID).
-		Scan(&username, &coins)
-
-	fmt.Fprintf(w, "Привет, %s! Ваш баланс: %d монет.", username, coins)
 }
