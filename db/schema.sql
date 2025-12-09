@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS bets (
                                     user_id INTEGER,
                                     amount INTEGER,
                                     game TEXT,
-                                    result TEXT,
+                                    result BOOLEAN,
                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
