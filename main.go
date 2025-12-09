@@ -54,6 +54,9 @@ func main() {
 	http.HandleFunc("/register", registerHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/profile", profileHandler)
+	http.HandleFunc("/admin/users", requireAdmin(adminUsersHandler))
+	http.HandleFunc("/admin/users/edit", requireAdmin(adminEditUser))
+	http.HandleFunc("/admin/users/delete", requireAdmin(adminDeleteUser))
 	println("Сервер запущен на http://localhost:8080")
 	err = http.ListenAndServe(":8080", nil)
 	if err != nil {

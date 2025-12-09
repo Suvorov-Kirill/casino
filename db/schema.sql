@@ -2,7 +2,8 @@ CREATE TABLE IF NOT EXISTS users (
                                      id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      username TEXT UNIQUE,
                                      password TEXT,
-                                     coins INTEGER
+                                     coins INTEGER,
+                                     user_role TEXT NOT NULL DEFAULT 'user'
 );
 
 CREATE TABLE IF NOT EXISTS bets (
@@ -13,3 +14,5 @@ CREATE TABLE IF NOT EXISTS bets (
                                     result TEXT,
                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+UPDATE users SET user_role = 'admin' WHERE id = 1;
