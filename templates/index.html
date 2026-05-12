@@ -1,41 +1,73 @@
 {{define "content"}}
 
+    <!-- Preload images to avoid flicker -->
+    <link rel="preload" href="/static/a1_k.png" as="image">
+    <link rel="preload" href="/static/a1_k.png" as="image">
+
     <!-- TITLE -->
     <div class="title-wrapper">
-        <h1 class="kinetic-text">
-            КАЗИНО
-        </h1>
+        <h1 class="kinetic-text">КАЗИНО</h1>
     </div>
 
     <!-- DRUM -->
     <div class="drum-wrapper">
-
-        <img src="/static/a1.png" alt="Cylinder">
-
+        <img id="drum-img"
+             src="/static/a1_k.png"
+             alt="Cylinder"
+             data-default="/static/a1_k.png"
+             data-hover="/static/a1_k.png"
+             data-active="/static/a1_k.png">
         <div class="scratches"></div>
-
     </div>
 
     <!-- UI BUTTONS -->
     <div class="buttons-container">
-
-        <a href="/play/slots" class="btn-embedded">
-            ИГРАТЬ
-        </a>
-
-        <a href="/profile" class="btn-embedded">
-            ПРОФИЛЬ
-        </a>
-
-        <a href="/login" class="btn-embedded">
-            ЛОГИН
-        </a>
-
+        <a href="/play/slots" class="btn-embedded">ИГРАТЬ</a>
+        <a href="/profile" class="btn-embedded">ПРОФИЛЬ</a>
+        <a href="/login" class="btn-embedded">ЛОГИН</a>
     </div>
 
     <!-- FOOTER -->
-    <div class="footer-sign">
-        INDUSTRIAL SYSTEM
-    </div>
+    <div class="footer-sign">INDUSTRIAL SYSTEM</div>
+
+    <!-- INTERACTIVITY SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const drum = document.getElementById('drum-img');
+            const buttons = document.querySelectorAll('.btn-embedded');
+
+            let isHovering = false;
+
+            buttons.forEach(btn => {
+                // При наведении
+                btn.addEventListener('mouseenter', () => {
+                    isHovering = true;
+                    drum.src = drum.dataset.hover;
+                });
+
+                // При уходе мыши
+                btn.addEventListener('mouseleave', () => {
+                    isHovering = false;
+                    // Если кнопка не нажата, возвращаем дефолт
+                    drum.src = drum.dataset.default;
+                });
+
+                // При нажатии
+                btn.addEventListener('mousedown', () => {
+                    drum.src = drum.dataset.active;
+                });
+
+                // При отпускании
+                btn.addEventListener('mouseup', () => {
+                    // Если курсор всё ещё над кнопкой, показываем hover-состояние
+                    drum.src = isHovering ? drum.dataset.hover : drum.dataset.default;
+                });
+
+                // Фокус с клавиатуры (доступность)
+                btn.addEventListener('focus', () => drum.src = drum.dataset.hover);
+                btn.addEventListener('blur', () => drum.src = drum.dataset.default);
+            });
+        });
+    </script>
 
 {{end}}
