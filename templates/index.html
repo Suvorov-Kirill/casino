@@ -1,14 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Мини Казино</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-<h1>Добро пожаловать в казино</h1>
-<form action="/play" method="post">
-    <button>Играть 🎲</button>
-</form>
-</body>
-</html>
+{{define "content"}}
+
+    <!-- TITLE -->
+    <div class="title-wrapper">
+        <h1 class="kinetic-text">
+            КАЗИНО
+        </h1>
+    </div>
+
+    <!-- DRUM -->
+    <div class="drum-wrapper">
+
+        <img src="/static/a1.png" alt="Cylinder">
+
+        <div class="scratches"></div>
+
+    </div>
+
+    <!-- UI BUTTONS -->
+    <div class="buttons-container">
+
+        <a href="/play/slots" class="btn-embedded">
+            ИГРАТЬ
+        </a>
+
+        <a href="/profile" class="btn-embedded">
+            ПРОФИЛЬ
+        </a>
+
+        <a href="/login" class="btn-embedded">
+            ЛОГИН
+        </a>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-sign">
+        INDUSTRIAL SYSTEM
+    </div>
+
+{{end}}

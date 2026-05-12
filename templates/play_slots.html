@@ -1,16 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Слоты</h1>
+{{define "content"}}
 
-<form method="POST">
-    <label>Ставка:</label>
-    <input type="number" name="bet" min="10">
-    <button type="submit">Играть</button>
-</form>
-</body>
-</html>
+    <!-- TITLE -->
+    <div class="title-wrapper">
+        <h1 class="kinetic-text">
+            СЛОТЫ
+        </h1>
+    </div>
+
+    <!-- SLOTS MACHINE -->
+    <div class="slots-wrapper">
+        <div class="slots-machine">
+            <!-- Scanline effect -->
+            <div class="scanline"></div>
+
+            <!-- Scratches overlay -->
+            <div class="scratches"></div>
+
+            <!-- Reels -->
+            <div class="reels-container">
+                <div class="reel">🍒</div>
+                <div class="reel">🍋</div>
+                <div class="reel">⭐</div>
+            </div>
+
+            <!-- Result Display -->
+            <div class="result-display">
+                {{if .Result}}
+                    <span class="result-text {{if .Win}}win{{end}}">
+                        {{.Result}}
+                    </span>
+                {{else}}
+                    <span class="result-placeholder">READY</span>
+                {{end}}
+            </div>
+        </div>
+    </div>
+
+    <!-- UI CONTROLS -->
+    <div class="buttons-container">
+        <form method="POST" class="slots-form">
+            <input type="number" name="bet" class="input-embedded" placeholder="СТАВКА" value="10" min="1">
+            <button type="submit" class="btn-embedded">
+                КРУТИТЬ
+            </button>
+        </form>
+
+        <a href="/" class="btn-embedded">
+            НАЗАД
+        </a>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-sign">
+        INDUSTRIAL SYSTEM
+    </div>
+
+{{end}}

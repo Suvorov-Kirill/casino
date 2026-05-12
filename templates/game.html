@@ -1,0 +1,15 @@
+{{ define "content" }}
+<div class="game-board">
+    <h1>Рулетка</h1>
+
+    <div class="status-panel">
+        <p>Текущая ставка: {{ .CurrentBet }}</p>
+        <p>Результат: {{ .LastResult }}</p>
+    </div>
+
+    <form action="/play" method="POST" class="controls">
+        <input type="number" name="amount" placeholder="Сумма" min="1" required>
+        <button type="submit" class="btn-spin">Крутить!</button>
+    </form>
+</div>
+{{ end }}

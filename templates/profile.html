@@ -1,0 +1,57 @@
+{{define "content"}}
+
+    <!-- TITLE -->
+    <div class="title-wrapper">
+        <h1 class="kinetic-text">
+            ПРОФИЛЬ
+        </h1>
+    </div>
+
+    <!-- PROFILE CARD -->
+    <div class="profile-wrapper">
+        <div class="profile-card">
+            <!-- Scanline effect -->
+            <div class="scanline"></div>
+
+            <!-- Scratches overlay -->
+            <div class="scratches"></div>
+
+            <!-- Header -->
+            <div class="card-header">
+                USER DATA
+            </div>
+
+            <!-- Body -->
+            <div class="card-body">
+                <div class="data-row">
+                    <span class="label">ПОЛЬЗОВАТЕЛЬ</span>
+                    <span class="value">{{.Username}}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">БАЛАНС</span>
+                    <span class="value">{{.Coins}} CR</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">РОЛЬ</span>
+                    <span class="value">{{.Role}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI BUTTONS -->
+    <div class="buttons-container">
+        <a href="/" class="btn-embedded">
+            НАЗАД
+        </a>
+        <a href="/logout" class="btn-embedded">
+            ВЫХОД
+        </a>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-sign">
+        INDUSTRIAL SYSTEM
+    </div>
+
+{{end}}
