@@ -1,16 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Мини Казино</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-<h2>Регистрация</h2>
-<form action="/register" method="POST">
-    <input name="username" placeholder="Логин">
-    <input name="password" type="password" placeholder="Пароль">
-    <button type="submit">Зарегистрироваться</button>
-</form>
-</body>
-</html>
+{{define "content"}}
+
+    <div class="panel-wrapper">
+
+        <div class="system-panel">
+
+            <div class="scanline"></div>
+
+            <div class="panel-title">
+                CREATE ACCOUNT
+            </div>
+
+            <form method="POST" class="system-form" autocomplete="off">
+
+                <input
+                        type="text"
+                        name="username"
+                        placeholder="USERNAME"
+                        class="system-input"
+                        required
+                >
+
+                <input
+                        type="password"
+                        name="password"
+                        placeholder="PASSWORD"
+                        class="system-input"
+                        required
+                >
+
+                <button type="submit" class="system-button">
+                    REGISTER
+                </button>
+
+            </form>
+
+            {{if .}}
+                <div class="status-text status-error">
+                    {{.}}
+                </div>
+            {{end}}
+
+        </div>
+
+    </div>
+
+{{end}}

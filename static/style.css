@@ -42,7 +42,8 @@ body {
     width: 100%;
     height: 100%;
 
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 
     background:
             radial-gradient(
@@ -126,11 +127,11 @@ main {
 
 .kinetic-text {
 
-    font-size: 5rem;
+    font-size: 4rem;
 
     font-weight: 500;
 
-    letter-spacing: 0.55em;
+    letter-spacing: 0.29em;
 
     text-transform: uppercase;
 
@@ -702,4 +703,892 @@ main {
         height: 38px;
         font-size: 0.7rem;
     }
+}
+/* =========================================================
+   GLOBAL PANELS
+========================================================= */
+
+.panel-wrapper {
+    position: absolute;
+
+    top: 52%;
+    left: 53%;
+
+    transform: translate(-50%, -50%);
+
+    z-index: 20;
+}
+
+.system-panel {
+    position: relative;
+
+    width: 460px;
+
+    padding: 28px;
+
+    border: 1px solid rgba(255, 0, 0, 0.7);
+
+    background:
+            linear-gradient(
+                    180deg,
+                    rgba(10,10,10,0.88),
+                    rgba(0,0,0,0.92)
+            );
+
+    box-shadow:
+            0 0 30px rgba(255,0,0,0.12),
+            inset 0 0 22px rgba(255,0,0,0.05);
+
+    overflow: hidden;
+
+    backdrop-filter: blur(4px);
+}
+
+.system-panel::before {
+    content: '';
+
+    position: absolute;
+    inset: 0;
+
+    background:
+            repeating-linear-gradient(
+                    0deg,
+                    rgba(255,255,255,0.02),
+                    rgba(255,255,255,0.02) 1px,
+                    transparent 1px,
+                    transparent 3px
+            );
+
+    pointer-events: none;
+
+    opacity: 0.18;
+}
+
+.panel-title {
+    margin-bottom: 24px;
+
+    font-size: 0.85rem;
+
+    letter-spacing: 0.42em;
+
+    text-transform: uppercase;
+
+    color: rgba(255,255,255,0.75);
+
+    text-shadow:
+            0 0 8px rgba(255,0,0,0.5);
+
+    border-bottom: 1px solid rgba(255,0,0,0.22);
+
+    padding-bottom: 12px;
+}
+
+/* =========================================================
+   FORM SYSTEM
+========================================================= */
+
+.system-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+.system-input {
+    width: 100%;
+    height: 48px;
+
+    padding: 0 16px;
+
+    background: rgba(0,0,0,0.52);
+
+    border: 1px solid rgba(255,0,0,0.45);
+
+    color: white;
+
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+
+    letter-spacing: 0.2em;
+
+    outline: none;
+
+    transition: 0.24s ease;
+}
+
+.system-input:focus {
+    border-color: rgb(255,0,0);
+
+    box-shadow:
+            0 0 18px rgba(255,0,0,0.24),
+            inset 0 0 12px rgba(255,0,0,0.1);
+}
+
+.system-input::placeholder {
+    color: rgba(255,255,255,0.28);
+}
+
+/* =========================================================
+   SYSTEM BUTTON
+========================================================= */
+
+.system-button {
+    height: 48px;
+
+    border: 1px solid rgb(255,0,0);
+
+    background: rgba(0,0,0,0.45);
+
+    color: white;
+
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+
+    font-weight: 600;
+
+    letter-spacing: 0.35em;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    transition: 0.24s ease;
+
+    text-shadow:
+            0 0 8px rgba(255,0,0,0.7);
+}
+
+.system-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+            0 0 18px rgba(255,0,0,0.35);
+
+    background: rgba(20,0,0,0.7);
+}
+
+/* =========================================================
+   STATUS TEXT
+========================================================= */
+
+.status-text {
+    margin-top: 18px;
+
+    font-size: 0.72rem;
+
+    letter-spacing: 0.24em;
+
+    text-transform: uppercase;
+
+    color: rgba(255,255,255,0.55);
+}
+
+.status-win {
+    color: #ff4747;
+
+    text-shadow:
+            0 0 10px rgba(255,0,0,0.9);
+}
+
+.status-error {
+    color: #ff9f9f;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.users-table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.users-table th,
+.users-table td {
+    border-bottom: 1px solid rgba(255,0,0,0.14);
+
+    padding: 12px 8px;
+
+    text-align: left;
+
+    font-size: 0.72rem;
+
+    letter-spacing: 0.12em;
+}
+
+.users-table th {
+    color: rgba(255,255,255,0.45);
+
+    text-transform: uppercase;
+}
+
+.users-table tr:hover {
+    background: rgba(255,0,0,0.05);
+}
+
+/* =========================================================
+   PROFILE DATA
+========================================================= */
+
+.profile-grid {
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+.profile-line {
+    display: flex;
+
+    justify-content: space-between;
+
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid rgba(255,0,0,0.12);
+}
+
+.profile-key {
+    color: rgba(255,255,255,0.42);
+
+    letter-spacing: 0.22em;
+
+    text-transform: uppercase;
+
+    font-size: 0.72rem;
+}
+
+.profile-value {
+    color: white;
+
+    letter-spacing: 0.16em;
+
+    text-shadow:
+            0 0 10px rgba(255,0,0,0.45);
+}.system-input,
+ .system-input:-webkit-autofill,
+ .system-input:-webkit-autofill:hover,
+ .system-input:-webkit-autofill:focus,
+ .system-input:-webkit-autofill:active {
+
+     -webkit-box-shadow: 0 0 0 1000px rgba(0,0,0,0.92) inset !important;
+
+     -webkit-text-fill-color: #ffffff !important;
+
+     caret-color: white;
+
+     transition: background-color 9999s ease-in-out 0s;
+ }
+/* =========================================================
+   AUTH / PROFILE ONLY
+========================================================= */
+
+.cyber-page {
+
+    position: absolute;
+
+    top: 50%;
+    left: 53%;
+
+    transform: translate(-50%, -50%);
+
+    z-index: 40;
+}
+
+.cyber-window {
+
+    position: relative;
+
+    width: 460px;
+
+    padding: 34px;
+
+    border-radius: 22px;
+
+    background:
+            linear-gradient(
+                    180deg,
+                    rgba(14,14,14,0.96),
+                    rgba(0,0,0,0.98)
+            );
+
+    border:
+            1px solid rgba(255,0,0,0.22);
+
+    box-shadow:
+            0 0 80px rgba(255,0,0,0.08),
+            inset 0 0 50px rgba(255,0,0,0.04);
+
+    overflow: hidden;
+
+    backdrop-filter: blur(8px);
+}
+
+.cyber-window::before {
+
+    content: '';
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+            repeating-linear-gradient(
+                    0deg,
+                    rgba(255,255,255,0.015),
+                    rgba(255,255,255,0.015) 1px,
+                    transparent 1px,
+                    transparent 3px
+            );
+
+    opacity: 0.12;
+
+    pointer-events: none;
+}
+
+.cyber-header {
+
+    margin-bottom: 26px;
+
+    font-size: 0.82rem;
+
+    font-weight: 600;
+
+    letter-spacing: 0.42em;
+
+    text-transform: uppercase;
+
+    color: rgba(255,255,255,0.82);
+
+    text-shadow:
+            0 0 10px rgba(255,0,0,0.42);
+
+    padding-bottom: 14px;
+
+    border-bottom:
+            1px solid rgba(255,0,0,0.12);
+}
+
+.cyber-form {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+.cyber-field {
+
+    height: 56px;
+
+    border-radius: 14px;
+
+    border:
+            1px solid rgba(255,0,0,0.12);
+
+    background:
+            rgba(0,0,0,0.62);
+
+    padding: 0 18px;
+
+    color: white;
+
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+
+    font-size: 0.9rem;
+
+    letter-spacing: 0.16em;
+
+    outline: none;
+
+    transition: 0.24s ease;
+}
+
+.cyber-field:focus {
+
+    border-color:
+            rgba(255,0,0,0.45);
+
+    box-shadow:
+            0 0 20px rgba(255,0,0,0.14);
+}
+
+.cyber-button {
+
+    height: 56px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background:
+            linear-gradient(
+                    90deg,
+                    #4b0000,
+                    #920000,
+                    #ff2a2a
+            );
+
+    color: white;
+
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+
+    font-size: 0.82rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.34em;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    transition:
+            transform 0.24s ease,
+            box-shadow 0.24s ease;
+}
+
+.cyber-button:hover {
+
+    transform:
+            translateY(-2px);
+
+    box-shadow:
+            0 0 24px rgba(255,0,0,0.3);
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.profile-ui {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+.profile-row {
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+    background:
+            rgba(255,255,255,0.03);
+
+    border:
+            1px solid rgba(255,0,0,0.08);
+
+    transition: 0.24s ease;
+}
+
+.profile-row:hover {
+
+    transform:
+            translateX(4px);
+
+    border:
+            1px solid rgba(255,0,0,0.22);
+
+    box-shadow:
+            0 0 20px rgba(255,0,0,0.08);
+}
+
+.profile-name {
+
+    color:
+            rgba(255,255,255,0.38);
+
+    font-size: 0.72rem;
+
+    letter-spacing: 0.28em;
+
+    text-transform: uppercase;
+}
+
+.profile-value-modern {
+
+    color: white;
+
+    font-size: 1rem;
+
+    font-weight: 600;
+
+    letter-spacing: 0.12em;
+
+    text-shadow:
+            0 0 10px rgba(255,0,0,0.3);
+}
+/* =========================================================
+   MACHINE UI
+========================================================= */
+
+.machine-ui {
+
+    position: absolute;
+
+    top: 50%;
+    right: 30%;
+
+    transform: translateY(-50%);
+
+    width: 420px;
+
+    z-index: 400;
+}
+
+/* =========================================================
+   TECH LINES
+========================================================= */
+
+.machine-ui::before {
+
+    content: '';
+
+    position: absolute;
+
+    left: -60px;
+    top: 0;
+
+    width: 1px;
+    height: 100%;
+
+    background:
+            linear-gradient(
+                    to bottom,
+                    transparent,
+                    rgba(255,0,0,0.5),
+                    transparent
+            );
+}
+
+.machine-ui::after {
+
+    content: '';
+
+    position: absolute;
+
+    left: -60px;
+    top: 50%;
+
+    width: 60px;
+    height: 1px;
+
+    background:
+            rgba(255,0,0,0.5);
+}
+
+/* =========================================================
+   TERMINAL MODULE
+========================================================= */
+
+.machine-module {
+
+    position: relative;
+
+    padding: 26px;
+
+    border:
+            1px solid rgba(255,0,0,0.3);
+
+    background:
+            linear-gradient(
+                    180deg,
+                    rgba(10,10,10,0.62),
+                    rgba(0,0,0,0.82)
+            );
+
+    box-shadow:
+            0 0 24px rgba(255,0,0,0.08),
+            inset 0 0 28px rgba(255,0,0,0.04);
+
+    backdrop-filter: blur(2px);
+
+    overflow: hidden;
+}
+
+/* =========================================================
+   PANEL GLOW
+========================================================= */
+
+.machine-module::before {
+
+    content: '';
+
+    position: absolute;
+
+    top: -80px;
+    right: -80px;
+
+    width: 160px;
+    height: 160px;
+
+    background:
+            radial-gradient(
+                    circle,
+                    rgba(255,0,0,0.18),
+                    transparent 70%
+            );
+
+    filter: blur(20px);
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.machine-header {
+
+    margin-bottom: 22px;
+}
+
+.machine-label {
+
+    color:
+            rgba(255,255,255,0.38);
+
+    font-size: 0.62rem;
+
+    letter-spacing: 0.42em;
+
+    text-transform: uppercase;
+
+    margin-bottom: 8px;
+}
+
+.machine-title {
+
+    color:
+            rgba(255,255,255,0.9);
+
+    font-size: 1.6rem;
+
+    font-weight: 500;
+
+    letter-spacing: 0.18em;
+
+    text-transform: uppercase;
+
+    text-shadow:
+            0 0 18px rgba(255,0,0,0.24);
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.machine-form {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.machine-input {
+
+    width: 100%;
+    height: 52px;
+
+    padding: 0 16px;
+
+    border:
+            1px solid rgba(255,0,0,0.28);
+
+    background:
+            rgba(0,0,0,0.42);
+
+    color: white;
+
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+
+    font-size: 0.82rem;
+
+    font-weight: 500;
+
+    letter-spacing: 0.24em;
+
+    text-transform: uppercase;
+
+    outline: none;
+
+    transition:
+            border 0.24s ease,
+            box-shadow 0.24s ease,
+            transform 0.24s ease;
+}
+
+.machine-input::placeholder {
+
+    color:
+            rgba(255,255,255,0.22);
+}
+
+.machine-input:focus {
+
+    border:
+            1px solid rgba(255,0,0,0.72);
+
+    box-shadow:
+            0 0 18px rgba(255,0,0,0.16),
+            inset 0 0 12px rgba(255,0,0,0.06);
+
+    transform:
+            translateX(4px);
+}
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.machine-btn {
+
+    position: relative;
+
+    height: 52px;
+
+    border:
+            1px solid rgb(255,0,0);
+
+    background:
+            rgba(0,0,0,0.08);
+
+    color: white;
+
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+
+    font-size: 0.82rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.42em;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    text-shadow:
+            0 0 8px rgb(255,0,0);
+
+    box-shadow:
+            0 0 14px rgba(255,0,0,0.12);
+
+    transition:
+            transform 0.24s ease,
+            box-shadow 0.24s ease;
+}
+
+.machine-btn::before {
+
+    content: '';
+
+    position: absolute;
+
+    top: 0;
+    left: -100%;
+
+    width: 100%;
+    height: 1px;
+
+    background:
+            linear-gradient(
+                    90deg,
+                    transparent,
+                    white,
+                    transparent
+            );
+
+    animation:
+            scanline 4s linear infinite;
+}
+
+.machine-btn:hover {
+
+    transform:
+            translateX(6px);
+
+    box-shadow:
+            0 0 22px rgba(255,0,0,0.24);
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.machine-stats {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+.machine-stat {
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    padding-bottom: 12px;
+
+    border-bottom:
+            1px solid rgba(255,0,0,0.1);
+}
+
+.machine-stat-name {
+
+    color:
+            rgba(255,255,255,0.34);
+
+    font-size: 0.66rem;
+
+    letter-spacing: 0.3em;
+
+    text-transform: uppercase;
+}
+
+.machine-stat-value {
+
+    color: white;
+
+    font-size: 1rem;
+
+    font-weight: 600;
+
+    letter-spacing: 0.14em;
+
+    text-shadow:
+            0 0 12px rgba(255,0,0,0.45);
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.machine-error {
+
+    margin-top: 16px;
+
+    color:
+            rgba(255,140,140,0.82);
+
+    font-size: 0.7rem;
+
+    letter-spacing: 0.18em;
+
+    text-transform: uppercase;
 }

@@ -1,57 +1,53 @@
 {{define "content"}}
 
-    <!-- TITLE -->
-    <div class="title-wrapper">
-        <h1 class="kinetic-text">
-            ПРОФИЛЬ
-        </h1>
-    </div>
+    <div class="machine-ui">
 
-    <!-- PROFILE CARD -->
-    <div class="profile-wrapper">
-        <div class="profile-card">
-            <!-- Scanline effect -->
+        <div class="machine-module">
+
             <div class="scanline"></div>
 
-            <!-- Scratches overlay -->
-            <div class="scratches"></div>
+            <div class="machine-header">
 
-            <!-- Header -->
-            <div class="card-header">
-                USER DATA
+                <div class="machine-label">
+                    USER TERMINAL
+                </div>
+
+                <div class="machine-title">
+                    PROFILE
+                </div>
+
             </div>
 
-            <!-- Body -->
-            <div class="card-body">
-                <div class="data-row">
-                    <span class="label">ПОЛЬЗОВАТЕЛЬ</span>
-                    <span class="value">{{.Username}}</span>
+            <div class="machine-stats">
+
+                <div class="machine-stat">
+
+                    <div class="machine-stat-name">
+                        USERNAME
+                    </div>
+
+                    <div class="machine-stat-value">
+                        {{.Username}}
+                    </div>
+
                 </div>
-                <div class="data-row">
-                    <span class="label">БАЛАНС</span>
-                    <span class="value">{{.Coins}} CR</span>
+
+                <div class="machine-stat">
+
+                    <div class="machine-stat-name">
+                        COINS
+                    </div>
+
+                    <div class="machine-stat-value">
+                        {{.Coins}}
+                    </div>
+
                 </div>
-                <div class="data-row">
-                    <span class="label">РОЛЬ</span>
-                    <span class="value">{{.Role}}</span>
-                </div>
+
             </div>
+
         </div>
-    </div>
 
-    <!-- UI BUTTONS -->
-    <div class="buttons-container">
-        <a href="/" class="btn-embedded">
-            НАЗАД
-        </a>
-        <a href="/logout" class="btn-embedded">
-            ВЫХОД
-        </a>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="footer-sign">
-        INDUSTRIAL SYSTEM
     </div>
 
 {{end}}

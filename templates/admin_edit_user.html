@@ -1,24 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Edit user</h1>
+{{define "content"}}
 
-<form method="POST">
+    <div class="panel-wrapper">
 
-    <label>Balance:</label>
-    <input type="number" name="coins" value="{{.Balance}}">
+        <div class="system-panel">
 
-    <label>Role:</label>
-    <select name="user_role">
-        <option value="user" {{if eq .Role "user"}}selected{{end}}>User</option>
-        <option value="admin" {{if eq .Role "admin"}}selected{{end}}>Admin</option>
-    </select>
+            <div class="scanline"></div>
 
-    <button type="submit">Save</button>
-</form>
-</body>
-</html>
+            <div class="panel-title">
+                EDIT USER
+            </div>
+
+            <form method="POST" class="system-form">
+
+                <input
+                        type="text"
+                        name="email"
+                        value="{{.Email}}"
+                        class="system-input"
+                >
+
+                <input
+                        type="number"
+                        name="balance"
+                        value="{{.Balance}}"
+                        class="system-input"
+                >
+
+                <input
+                        type="text"
+                        name="role"
+                        value="{{.Role}}"
+                        class="system-input"
+                >
+
+                <button class="system-button">
+                    SAVE
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+{{end}}

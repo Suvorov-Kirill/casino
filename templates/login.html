@@ -1,16 +1,63 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Мини Казино</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-<h2>Вход</h2>
-<form action="/login" method="POST">
-    <input name="username" placeholder="Логин">
-    <input name="password" type="password" placeholder="Пароль">
-    <button type="submit">Войти</button>
-</form>
-</body>
-</html>
+{{define "content"}}
+
+    <div class="machine-ui">
+
+        <div class="machine-module">
+
+            <div class="scanline"></div>
+
+            <div class="machine-header">
+
+                <div class="machine-label">
+                    INDUSTRIAL SYSTEM
+                </div>
+
+                <div class="machine-title">
+                    LOGIN
+                </div>
+
+            </div>
+
+            <form method="POST"
+                  class="machine-form"
+                  autocomplete="off">
+
+                <input
+                        type="text"
+                        name="username"
+                        placeholder="USERNAME"
+                        class="machine-input"
+                        required
+                >
+
+                <input
+                        type="password"
+                        name="password"
+                        placeholder="PASSWORD"
+                        class="machine-input"
+                        required
+                >
+
+                <button
+                        type="submit"
+                        class="machine-btn">
+
+                    ACCESS
+
+                </button>
+
+            </form>
+
+            {{if .}}
+
+                <div class="machine-error">
+                    {{.}}
+                </div>
+
+            {{end}}
+
+        </div>
+
+    </div>
+
+{{end}}

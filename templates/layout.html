@@ -1,35 +1,25 @@
-{{ define "base" }}
+{{define "base"}}
+
     <!DOCTYPE html>
-    <html lang="ru">
+    <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Go Casino</title>
+        <title>CASINO</title>
+
         <link rel="stylesheet" href="/static/style.css">
-        <style>
-            body { background: black; color: #ff4500; font-family: monospace; text-align: center; font-size: 18px; }
-            header, footer { border-bottom: 1px solid #ff4500; padding: 10px 0; }
-            .logo { font-size: 24px; text-transform: uppercase; }
-            nav a { color: #ff4500; text-decoration: none; margin: 0 15px; }
-            footer p { color: #ff4500; }
-        </style>
     </head>
+
     <body>
-    <header>
-        <div class="logo">Go Casino</div>
-        <nav>
-            <a href="/">Главная</a>
-            <a href="/play/slots">Слоты</a>
-            <a href="/login">Войти</a>
-            <a href="/register">Регистрация</a>
-        </nav>
-    </header>
+
+    <div class="vignette"></div>
+    <div class="film-grain"></div>
+
     <main>
-        {{ template "content" . }}
+        {{template "content" .}}
     </main>
-    <footer>
-        <p>&copy; 2025 Гулин Суворов</p>
-    </footer>
+
     </body>
     </html>
-{{ end }}
+
+{{end}}

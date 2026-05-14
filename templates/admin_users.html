@@ -1,27 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Users</h1>
-<table>
-    <tr>
-        <th>ID</th><th>Email</th><th>Balance</th><th>Role</th><th>Actions</th>
-    </tr>
-    {{range .}}
-    <tr>
-        <td>{{.ID}}</td>
-        <td>{{.Email}}</td>
-        <td>{{.Balance}}</td>
-        <td>{{.Role}}</td>
-        <td>
-            <a href="/admin/users/edit?id={{.ID}}">Edit</a> |
-            <a href="/admin/users/delete?id={{.ID}}">Delete</a>
-        </td>
-    </tr>
-    {{end}}
-</table>
-</body>
-</html>
+{{define "content"}}
+
+    <div class="panel-wrapper">
+
+        <div class="system-panel" style="width: 900px;">
+
+            <div class="scanline"></div>
+
+            <div class="panel-title">
+                USER DATABASE
+            </div>
+
+            <table class="users-table">
+
+                <tr>
+                    <th>ID</th>
+                    <th>EMAIL</th>
+                    <th>BALANCE</th>
+                    <th>ROLE</th>
+                </tr>
+
+                {{range .}}
+
+                    <tr>
+                        <td>{{.ID}}</td>
+                        <td>{{.Email}}</td>
+                        <td>{{.Balance}}</td>
+                        <td>{{.Role}}</td>
+                    </tr>
+
+                {{end}}
+
+            </table>
+
+        </div>
+
+    </div>
+
+{{end}}
