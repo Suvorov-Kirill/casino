@@ -6,7 +6,7 @@ import (
 )
 
 func SlotsGameLogic() (string, bool) {
-	symbols := []string{"🍒", "🍋", "⭐", "🔔", "7️⃣"}
+	symbols := []string{"🍒", "🍋", "⭐", "🔔"}
 	reel1 := symbols[rand.Intn(len(symbols))]
 	reel2 := symbols[rand.Intn(len(symbols))]
 	reel3 := symbols[rand.Intn(len(symbols))]
