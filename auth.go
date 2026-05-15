@@ -17,12 +17,12 @@ import (
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		tmpl, err := template.ParseFiles("templates/login.html")
+		tmpl, err := template.ParseFiles("templates/layout.html", "templates/login.html")
 		if err != nil {
 			http.Error(w, "Шаблон не найден", http.StatusInternalServerError)
 			return
 		}
-		err = tmpl.Execute(w, nil)
+		err = tmpl.ExecuteTemplate(w, "base", nil)
 		if err != nil {
 			http.Error(w, "Ошибка выполнения шаблона", http.StatusInternalServerError)
 		}
@@ -68,14 +68,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		tmpl, err := template.ParseFiles("templates/register.html")
+		tmpl, err := template.ParseFiles("templates/layout.html", "templates/register.html")
 		if err != nil {
 			http.Error(w, "Шаблон не найден", http.StatusInternalServerError)
 			log.Println("Template error:", err)
 			return
 		}
 
-		err = tmpl.Execute(w, nil)
+		err = tmpl.ExecuteTemplate(w, "base", nil)
 		if err != nil {
 			http.Error(w, "Ошибка выполнения шаблона", http.StatusInternalServerError)
 			log.Println("Template execute error:", err)
@@ -143,9 +143,24 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Выводим страницу
-	_, err = fmt.Fprintf(w, "Привет, %s! Ваш баланс: %d монет.", username, coins)
+	tmpl, err := template.ParseFiles("templates/layout.html", "templates/profile.html")
 	if err != nil {
-		log.Println("Ошибка вывода:", err)
+		http.Error(w, "Шаблон не найден", http.StatusInternalServerError)
+		log.Println("Template error:", err)
+		return
+	}
+
+	data := struct {
+		Username string
+		Coins    int
+	}{
+		Username: username,
+		Coins:    coins,
+	}
+
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		http.Error(w, "Ошибка выполнения шаблона", http.StatusInternalServerError)
+		log.Println("Template execute error:", err)
 	}
 }

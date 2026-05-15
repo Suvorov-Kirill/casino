@@ -76,12 +76,13 @@ func adminUsersHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles("templates/admin_users.html")
+	tmpl, err = template.ParseFiles("templates/layout.html", "templates/admin_users.html")
 	if err != nil {
 		http.Error(w, "Template parse error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	err = tmpl.Execute(w, users)
+	err = tmpl.ExecuteTemplate(w, "base", users)
 	if err != nil {
 		http.Error(w, "Template execute error: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -130,13 +131,13 @@ func adminEditUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles("templates/admin_edit_user.html")
+	tmpl, err := template.ParseFiles("templates/layout.html", "templates/admin_edit_user.html")
 	if err != nil {
 		http.Error(w, "Template parse error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	err = tmpl.Execute(w, u)
+	err = tmpl.ExecuteTemplate(w, "base", u)
 	if err != nil {
 		http.Error(w, "Template execute error: "+err.Error(), http.StatusInternalServerError)
 		return

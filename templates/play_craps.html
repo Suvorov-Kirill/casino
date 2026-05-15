@@ -1,23 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Craps 🎲</h1>
+{{define "content"}}
 
-{{if .InProgress}}
-<p>Игра в процессе. Point: {{.Point}}</p>
-<form method="POST">
-    <button type="submit">Бросить кости</button>
-</form>
-{{else}}
-<form method="POST">
-    <label>Ставка:</label>
-    <input type="number" name="bet" min="10">
-    <button type="submit">Начать игру</button>
-</form>
+    <div class="panel-wrapper">
+
+        <div class="system-panel">
+
+            <div class="scanline"></div>
+
+            <div class="panel-title">
+                CRAPS
+            </div>
+
+            {{if .InProgress}}
+                <div class="status-text">
+                    Игра в процессе. Point: {{.Point}}
+                </div>
+
+                <form method="POST" class="system-form">
+                    <button type="submit" class="system-button">
+                        БРОСИТЬ КОСТИ
+                    </button>
+                </form>
+            {{else}}
+                <form method="POST" class="system-form">
+                    <input type="number" name="bet" min="10" class="system-input" placeholder="СТАВКА">
+                    <button type="submit" class="system-button">
+                        НАЧАТЬ ИГРУ
+                    </button>
+                </form>
+            {{end}}
+
+            <a href="/" class="btn-embedded back-link">НАЗАД</a>
+
+        </div>
+
+    </div>
+
 {{end}}
-</body>
-</html>

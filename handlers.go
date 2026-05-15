@@ -19,13 +19,13 @@ import (
 
 // обработчик главной страницы
 func indexHandler(w http.ResponseWriter, _ *http.Request) {
-	tmpl, err := template.ParseFiles("templates/index.html")
+	tmpl, err := template.ParseFiles("templates/layout.html", "templates/index.html")
 	if err != nil {
 		http.Error(w, "Шаблон главной страницы не найден", http.StatusInternalServerError)
 		return
 	}
 
-	err = tmpl.Execute(w, nil)
+	err = tmpl.ExecuteTemplate(w, "base", nil)
 	if err != nil {
 		http.Error(w, "Ошибка выполнения", http.StatusInternalServerError)
 		return
@@ -88,8 +88,8 @@ func writeResponse(w http.ResponseWriter, msg string) {
 
 func playSlotsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		tmpl := template.Must(template.ParseFiles("templates/play_slots.html"))
-		err = tmpl.Execute(w, nil)
+		tmpl := template.Must(template.ParseFiles("templates/layout.html", "templates/play_slots.html"))
+		err = tmpl.ExecuteTemplate(w, "base", nil)
 		if err != nil {
 			http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
 			log.Println("Template execute error:", err)
@@ -151,8 +151,8 @@ func playCrapsHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		tmpl := template.Must(template.ParseFiles("templates/play_craps.html"))
-		err = tmpl.Execute(w, game)
+		tmpl := template.Must(template.ParseFiles("templates/layout.html", "templates/play_craps.html"))
+		err = tmpl.ExecuteTemplate(w, "base", game)
 		if err != nil {
 			http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
 			log.Println("Template execute error:", err)

@@ -17,6 +17,7 @@
                     <th>EMAIL</th>
                     <th>BALANCE</th>
                     <th>ROLE</th>
+                    <th>ACTIONS</th>
                 </tr>
 
                 {{range .}}
@@ -26,11 +27,17 @@
                         <td>{{.Email}}</td>
                         <td>{{.Balance}}</td>
                         <td>{{.Role}}</td>
+                        <td>
+                            <a href="/admin/users/edit?id={{.ID}}" class="action-btn edit-btn">EDIT</a>
+                            <a href="/admin/users/delete?id={{.ID}}" class="action-btn delete-btn" onclick="return confirm('Delete user?')">DELETE</a>
+                        </td>
                     </tr>
 
                 {{end}}
 
             </table>
+
+            <a href="/profile" class="btn-embedded back-link">НАЗАД</a>
 
         </div>
 

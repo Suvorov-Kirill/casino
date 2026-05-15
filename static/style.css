@@ -285,6 +285,10 @@ main {
             crt-flicker 5s infinite alternate;
 }
 
+.back-link {
+    margin-top: 24px;
+}
+
 /* =========================================================
    BUTTON SCANLINE
 ========================================================= */
@@ -923,6 +927,60 @@ main {
 
 .users-table tr:hover {
     background: rgba(255,0,0,0.05);
+}
+
+/* =========================================================
+   ACTION BUTTONS IN TABLE
+========================================================= */
+
+.action-btn {
+    display: inline-block;
+    padding: 4px 8px;
+    margin-right: 6px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(255,0,0,0.5);
+    background: rgba(0,0,0,0.3);
+    color: rgba(255,255,255,0.8);
+    text-shadow: 0 0 4px rgba(255,0,0,0.5);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    color: #ffffff;
+    border-color: rgb(255,0,0);
+    background: rgba(30,0,0,0.6);
+    box-shadow: 0 0 8px rgba(255,0,0,0.3);
+    transform: translateY(-1px);
+}
+
+.action-btn.edit-btn {
+    border-color: rgba(50,150,255,0.5);
+    color: rgba(100,180,255,0.9);
+    text-shadow: 0 0 4px rgba(50,150,255,0.7);
+}
+
+.action-btn.edit-btn:hover {
+    border-color: rgb(100,180,255);
+    color: #64b4ff;
+    box-shadow: 0 0 8px rgba(50,150,255,0.5);
+}
+
+.action-btn.delete-btn {
+    border-color: rgba(255,100,100,0.5);
+    color: rgba(255,150,150,0.9);
+    text-shadow: 0 0 4px rgba(255,100,100,0.7);
+}
+
+.action-btn.delete-btn:hover {
+    border-color: rgb(255,100,100);
+    color: #ff9696;
+    background: rgba(60,0,0,0.7);
+    box-shadow: 0 0 8px rgba(255,100,100,0.5);
 }
 
 /* =========================================================
