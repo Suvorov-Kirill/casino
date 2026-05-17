@@ -15,17 +15,27 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type authPageData struct {
+	Username  string
+	Message   string
+	IsSuccess bool
+}
+
 func loginHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
+	renderLoginPage := func(data authPageData) {
 		tmpl, err := template.ParseFiles("templates/layout.html", "templates/login.html")
 		if err != nil {
 			http.Error(w, "Шаблон не найден", http.StatusInternalServerError)
 			return
 		}
-		err = tmpl.ExecuteTemplate(w, "base", nil)
-		if err != nil {
+		if err := tmpl.ExecuteTemplate(w, "base", data); err != nil {
 			http.Error(w, "Ошибка выполнения шаблона", http.StatusInternalServerError)
+			log.Println("Template execute error:", err)
 		}
+	}
+
+	if r.Method == http.MethodGet {
+		renderLoginPage(authPageData{})
 		return
 	}
 
@@ -34,7 +44,10 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 
 	if username == "" || password == "" {
-		http.Error(w, "Введите логин и пароль", http.StatusBadRequest)
+		renderLoginPage(authPageData{
+			Username: username,
+			Message:  "Введите логин и пароль",
+		})
 		return
 	}
 
@@ -42,17 +55,26 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	var id int
 	err := db.DB.QueryRow("SELECT id, password FROM users WHERE username = ?", username).Scan(&id, &storedHash)
 	if errors.Is(err, sql.ErrNoRows) {
-		http.Error(w, "Неверный логин или пароль", http.StatusUnauthorized)
+		renderLoginPage(authPageData{
+			Username: username,
+			Message:  "Неверный логин или пароль",
+		})
 		return
 	} else if err != nil {
-		http.Error(w, "Ошибка сервера", http.StatusInternalServerError)
 		log.Println("DB error:", err)
+		renderLoginPage(authPageData{
+			Username: username,
+			Message:  "Ошибка сервера",
+		})
 		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(password))
 	if err != nil {
-		http.Error(w, "Неверный логин или пароль", http.StatusUnauthorized)
+		renderLoginPage(authPageData{
+			Username: username,
+			Message:  "Неверный логин или пароль",
+		})
 		return
 	}
 
@@ -63,11 +85,15 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		Path:  "/",
 	})
 
-	http.Redirect(w, r, "/profile", http.StatusSeeOther)
+	renderLoginPage(authPageData{
+		Username:  username,
+		Message:   "Login successful",
+		IsSuccess: true,
+	})
 }
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
+	renderRegisterPage := func(data authPageData) {
 		tmpl, err := template.ParseFiles("templates/layout.html", "templates/register.html")
 		if err != nil {
 			http.Error(w, "Шаблон не найден", http.StatusInternalServerError)
@@ -75,11 +101,14 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = tmpl.ExecuteTemplate(w, "base", nil)
-		if err != nil {
+		if err := tmpl.ExecuteTemplate(w, "base", data); err != nil {
 			http.Error(w, "Ошибка выполнения шаблона", http.StatusInternalServerError)
 			log.Println("Template execute error:", err)
 		}
+	}
+
+	if r.Method == http.MethodGet {
+		renderRegisterPage(authPageData{})
 		return
 	}
 
@@ -88,7 +117,10 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 
 		if username == "" || password == "" {
-			http.Error(w, "Введите логин и пароль", http.StatusBadRequest)
+			renderRegisterPage(authPageData{
+				Username: username,
+				Message:  "Введите логин и пароль",
+			})
 			return
 		}
 
@@ -106,18 +138,25 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		if err != nil {
 			if strings.Contains(err.Error(), "UNIQUE constraint failed") {
-				http.Error(w, "Пользователь с таким именем уже существует", http.StatusConflict)
+				renderRegisterPage(authPageData{
+					Username: username,
+					Message:  "Пользователь с таким именем уже существует",
+				})
 			} else {
-				http.Error(w, "Ошибка сервера", http.StatusInternalServerError)
 				log.Println("DB insert error:", err)
+				renderRegisterPage(authPageData{
+					Username: username,
+					Message:  "Ошибка сервера",
+				})
 			}
 			return
 		}
 
-		_, err = fmt.Fprintln(w, "Регистрация успешна! Теперь можете войти.")
-		if err != nil {
-			log.Println("Ошибка вывода:", err)
-		}
+		renderRegisterPage(authPageData{
+			Username:  username,
+			Message:   "Registration successful",
+			IsSuccess: true,
+		})
 	}
 }
 

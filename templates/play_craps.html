@@ -10,6 +10,16 @@
                 CRAPS
             </div>
 
+            <div class="status-text">
+                БАЛАНС: {{.Balance}}
+            </div>
+
+            {{if .Message}}
+                <div class="status-text {{if .Win}}status-win{{end}}">
+                    {{.Message}}
+                </div>
+            {{end}}
+
             {{if .InProgress}}
                 <div class="status-text">
                     Игра в процессе. Point: {{.Point}}

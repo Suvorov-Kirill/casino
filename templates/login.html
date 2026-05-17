@@ -27,6 +27,7 @@
                         name="username"
                         placeholder="USERNAME"
                         class="machine-input"
+                    value="{{.Username}}"
                         required
                 >
 
@@ -48,10 +49,10 @@
 
             </form>
 
-            {{if .}}
+            {{if .Message}}
 
-                <div class="machine-error">
-                    {{.}}
+                <div class="status-text {{if .IsSuccess}}status-win{{else}}status-error{{end}}">
+                    {{.Message}}
                 </div>
 
             {{end}}

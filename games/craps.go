@@ -8,6 +8,7 @@ import (
 type CrapsGame struct {
 	Point      int
 	InProgress bool
+	Bet        int
 }
 
 var CrapsGames = map[int]*CrapsGame{}
@@ -41,10 +42,12 @@ func (g *CrapsGame) ProcessPointRoll(sum int) string {
 	return "continue"
 }
 
-func FinishCrapsGame(userID int, bet int, win bool) {
+func FinishCrapsGame(userID int, win bool) {
 	game := CrapsGames[userID]
 	game.InProgress = false
 	game.Point = 0
+	bet := game.Bet
+	game.Bet = 0
 
 	if win {
 		db.DB.Exec("UPDATE users SET coins = coins + ? WHERE id = ?", bet*2, userID)

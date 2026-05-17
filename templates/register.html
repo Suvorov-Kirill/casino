@@ -17,6 +17,7 @@
                         name="username"
                         placeholder="USERNAME"
                         class="system-input"
+                    value="{{.Username}}"
                         required
                 >
 
@@ -34,9 +35,9 @@
 
             </form>
 
-            {{if .}}
-                <div class="status-text status-error">
-                    {{.}}
+            {{if .Message}}
+                <div class="status-text {{if .IsSuccess}}status-win{{else}}status-error{{end}}">
+                    {{.Message}}
                 </div>
             {{end}}
 
