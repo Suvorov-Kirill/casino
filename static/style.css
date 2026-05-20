@@ -467,7 +467,7 @@ main {
     margin: 0;
 }
 .input-embedded[type=number] {
-    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 /* =========================================================
