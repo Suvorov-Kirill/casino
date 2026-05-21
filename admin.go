@@ -10,8 +10,6 @@ import (
 	"log"
 	_ "log"
 	"net/http"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func requireAdmin(next http.HandlerFunc) http.HandlerFunc {
@@ -26,7 +24,7 @@ func requireAdmin(next http.HandlerFunc) http.HandlerFunc {
 
 		// Получаем роль пользователя из базы
 		var userRole string
-		err = db.DB.QueryRow("SELECT user_role FROM users WHERE id = ?", cookie.Value).Scan(&userRole)
+		err = db.DB.QueryRow("SELECT user_role FROM users WHERE id = $1::int", cookie.Value).Scan(&userRole)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -92,7 +90,7 @@ func adminUsersHandler(w http.ResponseWriter, _ *http.Request) {
 func adminDeleteUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
-	_, err := db.DB.Exec("DELETE FROM users WHERE id = ?", id)
+	_, err := db.DB.Exec("DELETE FROM users WHERE id = $1::int", id)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -108,7 +106,7 @@ func adminEditUser(w http.ResponseWriter, r *http.Request) {
 		coins := r.FormValue("coins")
 		userRole := r.FormValue("user_role")
 
-		_, err := db.DB.Exec("UPDATE users SET coins = ?, user_role = ? WHERE id = ?", coins, userRole, id)
+		_, err := db.DB.Exec("UPDATE users SET coins = $1, user_role = $2 WHERE id = $3::int", coins, userRole, id)
 		if err != nil {
 			http.Error(w, "Database update error: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -119,7 +117,7 @@ func adminEditUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var u models.User
-	err := db.DB.QueryRow("SELECT id, username, coins, user_role FROM users WHERE id = ?", id).Scan(
+	err := db.DB.QueryRow("SELECT id, username, coins, user_role FROM users WHERE id = $1::int", id).Scan(
 		&u.ID, &u.Email, &u.Balance, &u.Role,
 	)
 	if err != nil {

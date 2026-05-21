@@ -1,18 +1,18 @@
 CREATE TABLE IF NOT EXISTS users (
-                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                     username TEXT UNIQUE,
-                                     password TEXT,
-                                     coins INTEGER,
-                                     user_role TEXT NOT NULL DEFAULT 'user'
+    id BIGSERIAL PRIMARY KEY,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    coins INTEGER NOT NULL DEFAULT 100,
+    user_role TEXT NOT NULL DEFAULT 'user'
 );
 
 CREATE TABLE IF NOT EXISTS bets (
-                                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                    user_id INTEGER,
-                                    amount INTEGER,
-                                    game TEXT,
-                                    result BOOLEAN,
-                                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    amount INTEGER NOT NULL,
+    game TEXT NOT NULL,
+    result BOOLEAN NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 UPDATE users SET user_role = 'admin' WHERE id = 1;

@@ -9,9 +9,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strings"
 
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -53,7 +52,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var storedHash string
 	var id int
-	err := db.DB.QueryRow("SELECT id, password FROM users WHERE username = ?", username).Scan(&id, &storedHash)
+	err := db.DB.QueryRow("SELECT id, password FROM users WHERE username = $1", username).Scan(&id, &storedHash)
 	if errors.Is(err, sql.ErrNoRows) {
 		renderLoginPage(authPageData{
 			Username: username,
@@ -133,11 +132,12 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Добавляем пользователя
-		_, err = db.DB.Exec("INSERT INTO users (username, password, coins) VALUES (?, ?, ?)",
+		_, err = db.DB.Exec("INSERT INTO users (username, password, coins) VALUES ($1, $2, $3)",
 			username, string(hashedPassword), 100, // начальный баланс
 		)
 		if err != nil {
-			if strings.Contains(err.Error(), "UNIQUE constraint failed") {
+			var pgErr *pgconn.PgError
+			if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 				renderRegisterPage(authPageData{
 					Username: username,
 					Message:  "Пользователь с таким именем уже существует",
@@ -172,7 +172,7 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	// Получаем данные пользователя из базы
 	var username string
 	var coins int
-	err = db.DB.QueryRow("SELECT username, coins FROM users WHERE id = ?", userID).Scan(&username, &coins)
+	err = db.DB.QueryRow("SELECT username, coins FROM users WHERE id = $1::int", userID).Scan(&username, &coins)
 	if errors.Is(err, sql.ErrNoRows) {
 		http.Error(w, "Пользователь не найден", http.StatusNotFound)
 		return

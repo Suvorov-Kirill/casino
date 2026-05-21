@@ -50,10 +50,10 @@ func FinishCrapsGame(userID int, win bool) {
 	game.Bet = 0
 
 	if win {
-		db.DB.Exec("UPDATE users SET coins = coins + ? WHERE id = ?", bet*2, userID)
+		db.DB.Exec("UPDATE users SET coins = coins + $1 WHERE id = $2", bet*2, userID)
 	}
 
 	db.DB.Exec(
-		"INSERT INTO bets (user_id, amount, game, result) VALUES (?, ?, 'Craps', ?)",
+		"INSERT INTO bets (user_id, amount, game, result) VALUES ($1, $2, 'Craps', $3)",
 		userID, bet, win)
 }

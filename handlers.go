@@ -3,7 +3,6 @@ package main
 import (
 	"casino/db"
 	"casino/games"
-	_ "database/sql"
 	"errors"
 	"fmt"
 	"html/template"
@@ -13,8 +12,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 type slotsPageData struct {
@@ -73,7 +70,7 @@ func getUserIDAndBalance(r *http.Request) (userID int, balance int, err error) {
 		return 0, 0, err
 	}
 
-	err = db.DB.QueryRow("SELECT coins FROM users WHERE id = ?", userID).Scan(&balance)
+	err = db.DB.QueryRow("SELECT coins FROM users WHERE id = $1", userID).Scan(&balance)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -82,7 +79,7 @@ func getUserIDAndBalance(r *http.Request) (userID int, balance int, err error) {
 }
 
 func updateBalance(userID, newBalance int) error {
-	_, err := db.DB.Exec("UPDATE users SET coins = ? WHERE id = ?", newBalance, userID)
+	_, err := db.DB.Exec("UPDATE users SET coins = $1 WHERE id = $2", newBalance, userID)
 	return err
 }
 
@@ -118,7 +115,7 @@ func renderCrapsPage(w http.ResponseWriter, data crapsPageData) {
 
 func saveBet(userID, bet int, game string, win bool) error {
 	_, err := db.DB.Exec(
-		"INSERT INTO bets (user_id, amount, game, result) VALUES (?, ?, ?, ?)",
+		"INSERT INTO bets (user_id, amount, game, result) VALUES ($1, $2, $3, $4)",
 		userID, bet, game, win,
 	)
 	return err
@@ -197,7 +194,7 @@ func deductBet(userID, balance, bet int) error {
 	if bet > balance {
 		return errors.New("недостаточно монет")
 	}
-	_, err := db.DB.Exec("UPDATE users SET coins = ? WHERE id = ?", balance-bet, userID)
+	_, err := db.DB.Exec("UPDATE users SET coins = $1 WHERE id = $2", balance-bet, userID)
 	return err
 }
 

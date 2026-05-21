@@ -5,31 +5,45 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 var DB *sql.DB
 
 func Init() {
 	var err error
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		dsn = "postgres://postgres:postgres@localhost:5432/casino?sslmode=disable"
+	}
 
-	// Открываем (или создаём) файл базы данных
-	DB, err = sql.Open("sqlite3", "casino.db")
+	DB, err = sql.Open("pgx", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Подключение к базе успешно!")
+	if err := DB.Ping(); err != nil {
+		log.Fatal("Не удалось подключиться к PostgreSQL:", err)
+	}
+
+	fmt.Println("Подключение к PostgreSQL успешно!")
 
 	sqlBytes, err := os.ReadFile("db/schema.sql")
 	if err != nil {
 		log.Fatal("Не могу прочитать schema.sql:", err)
 	}
 
-	_, err = DB.Exec(string(sqlBytes))
-	if err != nil {
-		log.Fatal("Не могу выполнить SQL из schema.sql:", err)
+	for _, statement := range strings.Split(string(sqlBytes), ";") {
+		statement = strings.TrimSpace(statement)
+		if statement == "" {
+			continue
+		}
+
+		if _, err := DB.Exec(statement); err != nil {
+			log.Fatal("Не могу выполнить SQL из schema.sql:", err)
+		}
 	}
 
 	fmt.Println("Структура базы данных загружена.")
