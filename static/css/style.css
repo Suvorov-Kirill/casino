@@ -1,0 +1,8 @@
+/* static/css/style.css */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@300;400;500;600;700&display=swap');
+
+@import url('/static/css/base.css');
+@import url('/static/css/home.css');
+@import url('/static/css/games.css');
+@import url('/static/css/panels.css');

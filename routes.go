@@ -14,4 +14,5 @@ func registerRoutes() {
 	http.HandleFunc("/admin/users/delete", requireAdmin(adminDeleteUser))
 	http.HandleFunc("/play/slots", playSlotsHandler)
 	http.HandleFunc("/play/craps", playCrapsHandler)
+	http.HandleFunc("/play/roulette", playRouletteHandler)
 }

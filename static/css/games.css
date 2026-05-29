@@ -1,0 +1,267 @@
+/* static/css/games.css */
+
+/* =========================================================
+   SLOTS WRAPPER
+========================================================= */
+
+.slots-wrapper {
+    position: absolute;
+    top: 52%;
+    left: 42%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+/* =========================================================
+   EMBEDDED CARD BASE / SLOTS MACHINE
+========================================================= */
+
+.slots-machine {
+    position: relative;
+    width: 480px;
+    padding: 28px;
+    border: 1px solid rgb(255, 0, 0);
+    background: rgba(0, 0, 0, 0.45);
+    box-shadow:
+            0 0 25px rgba(255, 0, 0, 0.15),
+            inset 0 0 30px rgba(255, 0, 0, 0.08);
+    backdrop-filter: blur(2px);
+    animation: crt-flicker 5s infinite alternate;
+    overflow: hidden;
+}
+
+.scanline {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+            190deg,
+            transparent,
+            rgba(255, 255, 255, 0.6),
+            transparent
+    );
+    animation: scanline 4.6s linear infinite;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* =========================================================
+   SLOTS MACHINE COMPONENTS
+========================================================= */
+
+.reels-container {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.reel {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    border: 1px solid rgb(255, 0, 0);
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow:
+            inset 0 0 15px rgba(255, 0, 0, 0.2),
+            0 0 8px rgba(255, 0, 0, 0.1);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.result-display {
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.1);
+}
+
+.result-text {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-shadow:
+            0 0 8px rgb(255, 0, 0),
+            0 0 18px rgba(255, 0, 0, 0.5);
+}
+
+.result-text.win {
+    color: #ff3d3d;
+    text-shadow:
+            0 0 12px rgb(255, 0, 0),
+            0 0 30px rgba(255, 0, 0, 0.8);
+    animation: crt-flicker 0.2s infinite;
+}
+
+.result-placeholder {
+    font-size: 0.8rem;
+    letter-spacing: 0.35em;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* =========================================================
+   INPUT EMBEDDED
+========================================================= */
+
+.slots-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.input-embedded {
+    width: 190px;
+    height: 42px;
+    border: 1px solid rgb(255, 0, 0);
+    background: rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-align: center;
+    box-shadow:
+            inset 0 0 12px rgba(255, 0, 0, 0.1),
+            0 0 6px rgba(255, 0, 0, 0.1);
+    outline: none;
+    transition: all 0.24s ease;
+}
+
+.input-embedded::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.25em;
+}
+
+.input-embedded:focus {
+    border-color: rgb(255, 60, 60);
+    box-shadow:
+            inset 0 0 18px rgba(255, 0, 0, 0.2),
+            0 0 15px rgba(255, 0, 0, 0.3);
+    text-shadow: 0 0 8px rgb(255, 0, 0);
+}
+
+.input-embedded::-webkit-outer-spin-button,
+.input-embedded::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.input-embedded[type=number] {
+    appearance: textfield;
+}
+
+/* =========================================================
+   MOBILE ADJUSTMENTS (SLOTS)
+========================================================= */
+
+@media (max-width: 900px) {
+    .slots-wrapper {
+        left: 35%;
+        transform: translate(-50%, -50%) scale(0.85);
+    }
+    .slots-machine {
+        width: 320px;
+        padding: 18px;
+    }
+    .reel {
+        width: 60px;
+        height: 60px;
+        font-size: 1.6rem;
+    }
+    .input-embedded {
+        width: 145px;
+        height: 38px;
+        font-size: 0.7rem;
+    }
+}
+
+/* =========================================================
+   ROULETTE
+========================================================= */
+
+.roulette-panel {
+    width: 520px;
+}
+
+.roulette-wheel {
+    width: 190px;
+    height: 190px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 0, 0, 0.7);
+    background:
+            radial-gradient(circle at 50% 50%, rgba(0,0,0,0.96) 0 35%, rgba(255,255,255,0.03) 36%, rgba(0,0,0,0.92) 48%, rgba(255,0,0,0.11) 49%, rgba(0,0,0,0.96) 100%),
+            conic-gradient(from 0deg, rgba(255,0,0,0.16), rgba(0,0,0,0.26), rgba(255,0,0,0.16));
+    box-shadow:
+            0 0 28px rgba(255,0,0,0.2),
+            inset 0 0 22px rgba(255,255,255,0.05);
+}
+
+.roulette-wheel-number {
+    width: 138px;
+    height: 138px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(0,0,0,0.62);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 12px;
+    line-height: 1.45;
+    text-shadow: 0 0 10px rgba(255,0,0,0.5);
+}
+
+.roulette-placeholder {
+    color: rgba(255,255,255,0.34);
+    letter-spacing: 0.42em;
+}
+
+.roulette-red {
+    color: #ff5454;
+}
+
+.roulette-black {
+    color: #f0f0f0;
+}
+
+.roulette-green {
+    color: #5dff8f;
+}
+
+.roulette-rules {
+    margin-top: 8px;
+}
+
+.roulette-form {
+    margin-top: 18px;
+}
+
+.roulette-choice {
+    width: 100%;
+}
+
+.roulette-select {
+    width: 100%;
+}
+
+.roulette-hidden {
+    display: none;
+}

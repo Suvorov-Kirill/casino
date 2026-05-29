@@ -1,0 +1,80 @@
+{{ define "content" }}
+<div class="panel-wrapper">
+    <div class="system-panel roulette-panel">
+        <div class="scanline"></div>
+
+        <div class="panel-title">
+            ROULETTE
+        </div>
+
+        <div class="roulette-wheel">
+            {{if .HasResult}}
+                <div class="roulette-wheel-number roulette-{{.ResultClass}}">
+                    {{.ResultText}}
+                </div>
+            {{else}}
+                <div class="roulette-wheel-number roulette-placeholder">
+                    READY
+                </div>
+            {{end}}
+        </div>
+
+        <div class="status-text">
+            БАЛАНС: {{.Balance}}
+        </div>
+
+        <div class="status-text roulette-rules">
+            ЦВЕТ: x2, ЧИСЛО: x36
+        </div>
+
+        {{if .Message}}
+            <div class="status-text {{if .Win}}status-win{{end}}">
+                {{.Message}}
+            </div>
+        {{end}}
+
+        <form method="POST" class="system-form roulette-form" id="roulette-form">
+            <input type="number" name="bet" min="1" class="system-input" placeholder="СТАВКА" value="10">
+
+            <select name="bet_kind" class="system-input roulette-select" id="bet-kind">
+                <option value="color">ЦВЕТ</option>
+                <option value="number">ЧИСЛО</option>
+            </select>
+
+            <div class="roulette-choice roulette-choice-color" data-roulette-field="color">
+                <select name="color" class="system-input roulette-select">
+                    <option value="red">КРАСНОЕ</option>
+                    <option value="black">ЧЕРНОЕ</option>
+                </select>
+            </div>
+
+            <div class="roulette-choice roulette-choice-number" data-roulette-field="number">
+                <input type="number" name="number" min="0" max="36" class="system-input roulette-select" placeholder="ЧИСЛО 0-36">
+            </div>
+
+            <button type="submit" class="system-button">
+                КРУТИТЬ
+            </button>
+        </form>
+
+        <a href="/" class="btn-embedded back-link">НАЗАД</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const betKind = document.getElementById('bet-kind');
+        const colorField = document.querySelector('[data-roulette-field="color"]');
+        const numberField = document.querySelector('[data-roulette-field="number"]');
+
+        const syncFields = () => {
+            const mode = betKind.value;
+            colorField.classList.toggle('roulette-hidden', mode !== 'color');
+            numberField.classList.toggle('roulette-hidden', mode !== 'number');
+        };
+
+        betKind.addEventListener('change', syncFields);
+        syncFields();
+    });
+</script>
+{{ end }}

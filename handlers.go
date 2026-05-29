@@ -11,6 +11,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -27,6 +28,18 @@ type crapsPageData struct {
 	InProgress bool
 	Message    string
 	Win        bool
+}
+
+type roulettePageData struct {
+	Balance     int
+	Message     string
+	Win         bool
+	HasResult   bool
+	ResultText  string
+	ResultClass string
+	BetKind     string
+	BetChoice   string
+	BetAmount   int
 }
 
 // обработчик главной страницы
@@ -100,6 +113,21 @@ func renderSlotsPage(w http.ResponseWriter, data slotsPageData) {
 
 func renderCrapsPage(w http.ResponseWriter, data crapsPageData) {
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/play_craps.html")
+	if err != nil {
+		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
+		log.Println("Template parse error:", err)
+		return
+	}
+
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
+		log.Println("Template execute error:", err)
+	}
+}
+
+func renderRoulettePage(w http.ResponseWriter, data roulettePageData) {
+	tmpl, err := template.ParseFiles("templates/layout.html", "templates/roulette.html")
 	if err != nil {
 		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
 		log.Println("Template parse error:", err)
@@ -282,4 +310,106 @@ func playCrapsHandler(w http.ResponseWriter, r *http.Request) {
 		data.InProgress = game.InProgress
 		renderCrapsPage(w, data)
 	}
+}
+
+func playRouletteHandler(w http.ResponseWriter, r *http.Request) {
+	userID, balance, err := getUserIDAndBalance(r)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	data := roulettePageData{Balance: balance}
+
+	if r.Method != http.MethodPost {
+		renderRoulettePage(w, data)
+		return
+	}
+
+	bet, parseErr := strconv.Atoi(r.FormValue("bet"))
+	if parseErr != nil || bet <= 0 {
+		data.Message = "Введите корректную ставку"
+		renderRoulettePage(w, data)
+		return
+	}
+
+	if bet > balance {
+		data.Message = "Недостаточно монет"
+		renderRoulettePage(w, data)
+		return
+	}
+
+	betKind := strings.ToLower(strings.TrimSpace(r.FormValue("bet_kind")))
+	result := games.SpinRoulette()
+	data.HasResult = true
+	data.ResultText = fmt.Sprintf("%d / %s", result.Number, strings.ToUpper(result.Color))
+	data.ResultClass = result.Color
+	data.BetAmount = bet
+	data.BetKind = betKind
+
+	newBalance := balance - bet
+	win := false
+	message := ""
+
+	switch betKind {
+	case "number":
+		betChoice, choiceErr := strconv.Atoi(r.FormValue("number"))
+		if choiceErr != nil || betChoice < 0 || betChoice > 36 {
+			data.Message = "Введите число от 0 до 36"
+			renderRoulettePage(w, data)
+			return
+		}
+
+		data.BetChoice = strconv.Itoa(betChoice)
+		if betChoice == result.Number {
+			win = true
+			newBalance += bet * 36
+			message = fmt.Sprintf("Число %d сыграло. Выигрыш x36.", betChoice)
+		} else {
+			message = fmt.Sprintf("Выпало %d. Ставка на %d не зашла.", result.Number, betChoice)
+		}
+	case "color":
+		betChoice := strings.ToLower(strings.TrimSpace(r.FormValue("color")))
+		if betChoice != "red" && betChoice != "black" {
+			data.Message = "Выберите красное или чёрное"
+			renderRoulettePage(w, data)
+			return
+		}
+
+		data.BetChoice = betChoice
+		if betChoice == result.Color {
+			win = true
+			newBalance += bet * 2
+			message = fmt.Sprintf("%s сыграло. Выигрыш x2.", strings.ToUpper(betChoice))
+		} else {
+			message = fmt.Sprintf("Выпало %s. Ставка на %s не зашла.", result.Color, betChoice)
+		}
+	default:
+		data.Message = "Выберите тип ставки"
+		renderRoulettePage(w, data)
+		return
+	}
+
+	if err := updateBalance(userID, newBalance); err != nil {
+		data.Message = "Ошибка обновления баланса"
+		renderRoulettePage(w, data)
+		return
+	}
+
+	if err := saveBet(userID, bet, "Roulette", win); err != nil {
+		data.Message = "Ошибка записи ставки"
+		renderRoulettePage(w, data)
+		return
+	}
+
+	_, currentBalance, err := getUserIDAndBalance(r)
+	if err == nil {
+		data.Balance = currentBalance
+	} else {
+		data.Balance = newBalance
+	}
+
+	data.Win = win
+	data.Message = message
+	renderRoulettePage(w, data)
 }

@@ -1,0 +1,221 @@
+/* static/css/home.css */
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.title-wrapper {
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+}
+
+.kinetic-text {
+    font-size: 4rem;
+    font-weight: 500;
+    letter-spacing: 0.29em;
+    text-transform: uppercase;
+    color: rgba(225,235,245,0.88);
+    opacity: 0.82;
+    text-shadow: 0 0 12px rgba(255,255,255,0.04);
+}
+
+/* =========================================================
+   DRUM
+========================================================= */
+
+.drum-wrapper {
+    position: absolute;
+    top: 52%;
+    left: 42%;
+    width: 980px;
+    height: 980px;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.drum-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter:
+            brightness(0.78)
+            contrast(1.12)
+            saturate(0.72)
+            drop-shadow(0 0 120px rgba(0,0,0,0.96));
+}
+
+/* =========================================================
+   SCRATCHES
+========================================================= */
+
+.scratches {
+    position: absolute;
+    inset: 0;
+    opacity: 0.14;
+    background-image:
+            repeating-linear-gradient(
+                    42deg,
+                    transparent,
+                    transparent 14px,
+                    rgba(255,255,255,0.015) 14px,
+                    rgba(255,255,255,0.015) 15px
+            ),
+            repeating-linear-gradient(
+                    -35deg,
+                    transparent,
+                    transparent 18px,
+                    rgba(0,0,0,0.12) 18px,
+                    rgba(0,0,0,0.12) 19px
+            );
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
+/* =========================================================
+   BUTTONS CONTAINER
+========================================================= */
+
+.buttons-container {
+    position: absolute;
+    top: 50%;
+    left: 53%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    z-index: 30;
+}
+
+/* =========================================================
+   CRT BUTTONS
+========================================================= */
+
+.btn-embedded {
+    position: relative;
+    width: 190px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid rgb(255, 0, 0);
+    background: rgba(0,0,0,0.03);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    text-shadow:
+            0 0 6px rgb(255, 0, 0),
+            0 0 18px rgb(182, 14, 14);
+    box-shadow:
+            0 0 10px rgb(67, 3, 3),
+            inset 0 0 12px rgba(255,90,20,0.05);
+    backdrop-filter: blur(1px);
+    transition:
+            transform 0.24s ease,
+            opacity 0.24s ease,
+            box-shadow 0.24s ease,
+            border-color 0.24s ease;
+    animation: crt-flicker 5s infinite alternate;
+}
+
+.back-link {
+    margin-top: 24px;
+}
+
+/* =========================================================
+   BUTTON SCANLINE
+========================================================= */
+
+.btn-embedded::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 1px;
+    background:
+            linear-gradient(
+                    190deg,
+                    transparent,
+                    rgb(255, 255, 255),
+                    transparent
+            );
+    animation: scanline 4.6s linear infinite;
+}
+
+/* =========================================================
+   BUTTON HOVER
+========================================================= */
+
+.btn-embedded:hover {
+    transform: translateX(8px);
+    color: #ed0000;
+    border-color: rgb(243, 0, 0);
+    box-shadow:
+            0 0 18px rgba(255, 0, 0, 0.42),
+            0 0 42px rgba(20, 173, 255, 0.18),
+            inset 0 0 18px rgba(255,120,50,0.08);
+}
+
+.btn-embedded:active {
+    transform: translateX(4px) scale(0.985);
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer-sign {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(140,160,180,0.32);
+    font-size: 0.62rem;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    z-index: 20;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+    .drum-wrapper {
+        width: 145vw;
+        height: 145vw;
+        left: 35%;
+    }
+    .buttons-container {
+        left: 58%;
+    }
+    .btn-embedded {
+        width: 145px;
+        height: 38px;
+        font-size: 0.64rem;
+    }
+    .kinetic-text {
+        font-size: 2.6rem;
+        letter-spacing: 0.28em;
+    }
+    .roulette-panel {
+        width: 340px;
+    }
+    .roulette-wheel {
+        width: 150px;
+        height: 150px;
+    }
+    .roulette-wheel-number {
+        width: 108px;
+        height: 108px;
+        font-size: 0.78rem;
+        letter-spacing: 0.18em;
+    }
+}
