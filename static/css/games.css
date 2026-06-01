@@ -265,3 +265,214 @@
 .roulette-hidden {
     display: none;
 }
+/* =========================================================
+   BLACKJACK
+========================================================= */
+
+.blackjack-panel {
+    width: 540px;
+}
+
+.blackjack-table {
+    margin-top: 20px;
+    margin-bottom: 24px;
+    padding: 16px;
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.hand-container {
+    margin-bottom: 20px;
+}
+
+.hand-container:last-child {
+    margin-bottom: 0;
+}
+
+.hand-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 12px;
+}
+
+.cards-flex {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+
+.bj-card {
+    position: relative;
+    width: 58px;
+    height: 82px;
+    border: 1px solid rgba(255, 0, 0, 0.6);
+    background: linear-gradient(135deg, rgba(15, 15, 15, 0.9), rgba(5, 5, 5, 0.95));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    transition: transform 0.2s ease;
+}
+
+.bj-card:hover {
+    transform: translateY(-3px);
+}
+
+.card-rank {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.card-suit {
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-top: 4px;
+}
+
+/* Красные масти светятся красным */
+.card-red {
+    color: #ff3d3d;
+    text-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+    border-color: rgba(255, 0, 0, 0.8);
+}
+
+/* Чёрные масти - белые/серые со слабым красным отливом базы */
+.card-black {
+    color: #e0e0e0;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Рубашка скрытой карты дилера */
+.card-hidden {
+    border-color: rgba(255, 0, 0, 0.4);
+}
+
+.card-back {
+    width: 100%;
+    height: 100%;
+    background:
+            repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 4px,
+                    rgba(255, 0, 0, 0.2) 4px,
+                    rgba(255, 0, 0, 0.2) 6px
+            );
+    opacity: 0.8;
+}
+
+/* Кнопки действий */
+.blackjack-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.blackjack-actions .system-button {
+    flex: 1;
+}
+/* =========================================================
+   BLACKJACK HELPER COMPONENT (RULES PANEL)
+========================================================= */
+
+/* Кнопка вызова подсказки в углу панели */
+.rules-trigger-btn {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    background: transparent;
+    border: 1px solid rgba(255, 0, 0, 0.4);
+    color: rgba(255, 0, 0, 0.8);
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    cursor: pointer;
+    z-index: 25;
+    transition: all 0.2s ease;
+}
+
+.rules-trigger-btn:hover {
+    color: #ffffff;
+    border-color: rgb(255, 0, 0);
+    text-shadow: 0 0 8px rgb(255, 0, 0);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+}
+
+/* Оверлей внутри игровой панели */
+.rules-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(8, 8, 8, 0.98), rgba(2, 2, 2, 0.99));
+    z-index: 30;
+    padding: 2px 32px 32px 32px;
+    border: 1px solid rgba(255, 0, 0, 0.85);
+    box-shadow: inset 0 0 30px rgba(255, 0, 0, 0.25);
+    backdrop-filter: blur(6px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Класс для скрытия панели */
+.rules-overlay.rules-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.98);
+}
+
+/* Кнопка закрытия */
+.rules-close {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    font-size: 0.75rem;
+    color: #ff3d3d;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    transition: text-shadow 0.2s ease;
+}
+
+.rules-close:hover {
+    text-shadow: 0 0 8px #ff0000;
+    color: #ffffff;
+}
+
+/* Секции внутри подсказки */
+.rules-section-title {
+    font-size: 0.85rem;
+    color: #ff3d3d;
+    letter-spacing: 0.2em;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 0, 0, 0.25);
+    padding-bottom: 6px;
+    font-weight: 600;
+}
+
+.rules-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.rules-list li {
+    font-size: 0.82rem;
+    line-height: 1;
+    color: #c4cbd0;
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+}
+
+.rules-list li strong {
+    color: #ffffff;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+}

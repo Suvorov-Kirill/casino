@@ -1,0 +1,110 @@
+{{define "content"}}
+    <div class="panel-wrapper">
+        <div class="system-panel blackjack-panel">
+            <div class="scanline"></div>
+
+            <button type="button" id="toggle-rules-btn" class="rules-trigger-btn">[ ИНФО ]</button>
+
+            <div class="panel-title">BLACKJACK</div>
+
+            <div class="status-text">БАЛАНС: {{.Balance}}</div>
+
+            {{if .Message}}
+                <div class="status-text {{if eq .Status "won" "blackjack"}}status-win{{else if eq .Status "lost"}}status-error{{end}}">
+                    {{.Message}}
+                </div>
+            {{end}}
+
+            {{if or .InProgress .Status}}
+                <div class="blackjack-table">
+                    <div class="hand-container">
+                        <div class="hand-label">ДИЛЕР {{if not .InProgress}}[{{.DealerScore}}]{{end}}</div>
+                        <div class="cards-flex">
+                            {{range .DealerCards}}
+                                <div class="bj-card {{if eq .Color "hidden"}}card-hidden{{else}}card-{{.Color}}{{end}}">
+                                    {{if eq .Color "hidden"}}
+                                        <div class="card-back"></div>
+                                    {{else}}
+                                        <span class="card-rank">{{.Rank}}</span>
+                                        <span class="card-suit">{{.Suit}}</span>
+                                    {{end}}
+                                </div>
+                            {{end}}
+                        </div>
+                    </div>
+
+                    <div class="hand-container">
+                        <div class="hand-label">ВЫ [{{.PlayerScore}}] (СТАВКА: {{.Bet}})</div>
+                        <div class="cards-flex">
+                            {{range .PlayerCards}}
+                                <div class="bj-card card-{{.Color}}">
+                                    <span class="card-rank">{{.Rank}}</span>
+                                    <span class="card-suit">{{.Suit}}</span>
+                                </div>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+
+                {{if .InProgress}}
+                    <form method="POST" class="system-form blackjack-actions">
+                        <button type="submit" name="action" value="hit" class="system-button">ВЗЯТЬ КАРТУ (HIT)</button>
+                        <button type="submit" name="action" value="stand" class="system-button">ОСТАНОВИТЬСЯ (STAND)</button>
+                    </form>
+                {{else}}
+                    <a href="/play/blackjack" class="system-button btn-text-center" style="margin-top: 16px; display: block; text-align: center; text-decoration: none; line-height: 48px;">НОВАЯ ИГРА</a>
+                {{end}}
+
+            {{else}}
+                <form method="POST" class="system-form" style="margin-top: 24px;">
+                    <input type="hidden" name="action" value="start">
+                    <input type="number" name="bet" min="1" class="system-input" placeholder="СТАВКА" value="10">
+                    <button type="submit" class="system-button">СДАТЬ КАРТЫ</button>
+                </form>
+            {{end}}
+
+            <a href="/" class="btn-embedded back-link">НАЗАД</a>
+
+            <div id="rules-overlay" class="rules-overlay rules-hidden">
+                <div class="rules-close" id="close-rules-btn">[ ЗАКРЫТЬ ]</div>
+
+                <div class="rules-section-title">СТОИМОСТЬ КАРТ</div>
+                <ul class="rules-list">
+                    <li>2 — 9:        по номиналу карты</li>
+                    <li>10, J, Q, K:  ровно 10 очков</li>
+                    <li>Туз (A):      11 очков (или 1, если выходит перебор)</li>
+                </ul>
+
+                <div class="rules-section-title">КРАТКИЕ ПРАВИЛА</div>
+                <ul class="rules-list">
+                    <li><strong>цель — набрать как можно ближе к 21 очку, но не больше.</strong></li>
+                    <li>HIT: взять еще карту. при сумме > 21 — проигрыш.</li>
+                    <li>STAND: зафиксировать очки. ход переходит к дилеру.</li>
+                    <li>дилер обязан брать карты, пока у него меньше 17 очков.</li>
+                    <li>при равенстве очков (PUSH) ставка возвращается на баланс.</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('toggle-rules-btn');
+            const closeBtn = document.getElementById('close-rules-btn');
+            const overlay = document.getElementById('rules-overlay');
+
+            if (toggleBtn && overlay) {
+                toggleBtn.addEventListener('click', () => {
+                    overlay.classList.remove('rules-hidden');
+                });
+            }
+
+            if (closeBtn && overlay) {
+                closeBtn.addEventListener('click', () => {
+                    overlay.classList.add('rules-hidden');
+                });
+            }
+        });
+    </script>
+{{end}}

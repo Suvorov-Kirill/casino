@@ -15,4 +15,5 @@ func registerRoutes() {
 	http.HandleFunc("/play/slots", playSlotsHandler)
 	http.HandleFunc("/play/craps", playCrapsHandler)
 	http.HandleFunc("/play/roulette", playRouletteHandler)
+	http.HandleFunc("/play/blackjack", playBlackjackHandler)
 }

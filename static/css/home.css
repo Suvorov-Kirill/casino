@@ -80,7 +80,7 @@
 
 .buttons-container {
     position: absolute;
-    top: 50%;
+    top: 60%;
     left: 53%;
     transform: translateY(-50%);
     display: flex;

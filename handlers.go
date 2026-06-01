@@ -41,6 +41,23 @@ type roulettePageData struct {
 	BetChoice   string
 	BetAmount   int
 }
+type CardDisplay struct {
+	Rank  string
+	Suit  string
+	Color string
+}
+
+type blackjackPageData struct {
+	Balance     int
+	Message     string
+	Status      string // "playing", "won", "lost", "push", "blackjack"
+	PlayerCards []CardDisplay
+	PlayerScore int
+	DealerCards []CardDisplay
+	DealerScore int
+	InProgress  bool
+	Bet         int
+}
 
 // обработчик главной страницы
 func indexHandler(w http.ResponseWriter, _ *http.Request) {
@@ -312,6 +329,209 @@ func playCrapsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func renderBlackjackPage(w http.ResponseWriter, data blackjackPageData) {
+	tmpl, err := template.ParseFiles("templates/layout.html", "templates/play_blackjack.html")
+	if err != nil {
+		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
+		log.Println("Template parse error:", err)
+		return
+	}
+	tmpl.ExecuteTemplate(w, "base", data)
+}
+
+func parseHand(handStr string) []string {
+	if handStr == "" {
+		return []string{}
+	}
+	return strings.Split(handStr, ",")
+}
+
+func makeDisplayHand(cards []string, hideDealerSecondCard bool) []CardDisplay {
+	display := make([]CardDisplay, len(cards))
+	for i, card := range cards {
+		if i == 1 && hideDealerSecondCard {
+			display[i] = CardDisplay{Rank: "?", Suit: "?", Color: "hidden"}
+		} else {
+			rank, suit, color := games.FormatCard(card)
+			display[i] = CardDisplay{Rank: rank, Suit: suit, Color: color}
+		}
+	}
+	return display
+}
+
+func playBlackjackHandler(w http.ResponseWriter, r *http.Request) {
+	userID, balance, err := getUserIDAndBalance(r)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	data := blackjackPageData{Balance: balance}
+
+	// 1. Проверяем, есть ли активная игра в БД
+	var betAmount int
+	var playerHandStr, dealerHandStr, deckStr, status string
+	err = db.DB.QueryRow("SELECT bet_amount, player_hand, dealer_hand, deck, status FROM blackjack_games WHERE user_id = $1", userID).
+		Scan(&betAmount, &playerHandStr, &dealerHandStr, &deckStr, &status)
+
+	hasActiveGame := err == nil
+
+	if r.Method == http.MethodGet {
+		if hasActiveGame {
+			playerHand := parseHand(playerHandStr)
+			dealerHand := parseHand(dealerHandStr)
+			data.InProgress = true
+			data.Bet = betAmount
+			data.PlayerScore = games.CalculateScore(playerHand)
+			data.PlayerCards = makeDisplayHand(playerHand, false)
+			// Скрываем вторую карту дилера, если игра еще идет
+			data.DealerCards = makeDisplayHand(dealerHand, true)
+		}
+		renderBlackjackPage(w, data)
+		return
+	}
+
+	// Обработка POST-запросов
+	action := r.FormValue("action") // "start", "hit", "stand"
+
+	if action == "start" && !hasActiveGame {
+		bet, parseErr := strconv.Atoi(r.FormValue("bet"))
+		if parseErr != nil || bet <= 0 {
+			data.Message = "Введите корректную ставку"
+			renderBlackjackPage(w, data)
+			return
+		}
+		if bet > balance {
+			data.Message = "Недостаточно монет"
+			renderBlackjackPage(w, data)
+			return
+		}
+
+		// Снимаем ставку
+		newBalance := balance - bet
+		updateBalance(userID, newBalance)
+		data.Balance = newBalance
+
+		playerHand, dealerHand, deck := games.InitialDeal()
+		playerScore := games.CalculateScore(playerHand)
+
+		// Проверка на натуральный блэкджек со старта
+		gameStatus := "playing"
+		if playerScore == 21 {
+			gameStatus = "blackjack"
+			// Выплачиваем сразу 3 к 2
+			winAmount := bet + (bet * 3 / 2)
+			updateBalance(userID, newBalance+winAmount)
+			data.Balance = newBalance + winAmount
+			saveBet(userID, bet, "Blackjack", true)
+		}
+
+		// Сохраняем в БД
+		_, err = db.DB.Exec("INSERT INTO blackjack_games (user_id, bet_amount, player_hand, dealer_hand, deck, status) VALUES ($1, $2, $3, $4, $5, $6)",
+			userID, bet, strings.Join(playerHand, ","), strings.Join(dealerHand, ","), strings.Join(deck, ","), gameStatus)
+
+		if gameStatus == "playing" {
+			data.InProgress = true
+			data.Message = "Игра начата!"
+			data.DealerCards = makeDisplayHand(dealerHand, true) // Скрываем
+		} else {
+			data.Status = gameStatus
+			data.Message = "Блэкджек! Вы выиграли!"
+			data.DealerCards = makeDisplayHand(dealerHand, false) // Открываем
+			data.DealerScore = games.CalculateScore(dealerHand)
+			db.DB.Exec("DELETE FROM blackjack_games WHERE user_id = $1", userID) // Удаляем завершенную игру
+		}
+
+		data.PlayerCards = makeDisplayHand(playerHand, false)
+		data.PlayerScore = playerScore
+		data.Bet = bet
+		renderBlackjackPage(w, data)
+		return
+	}
+
+	if hasActiveGame && data.Status != "playing" {
+		playerHand := parseHand(playerHandStr)
+		dealerHand := parseHand(dealerHandStr)
+		deck := parseHand(deckStr)
+
+		if action == "hit" {
+			playerHand, deck = games.DrawCard(playerHand, deck)
+			playerScore := games.CalculateScore(playerHand)
+
+			if playerScore > 21 {
+				status = "lost"
+				saveBet(userID, betAmount, "Blackjack", false)
+				db.DB.Exec("DELETE FROM blackjack_games WHERE user_id = $1", userID)
+				data.Message = "Перебор! Вы проиграли."
+			} else {
+				// Обновляем состояние
+				db.DB.Exec("UPDATE blackjack_games SET player_hand = $1, deck = $2 WHERE user_id = $3",
+					strings.Join(playerHand, ","), strings.Join(deck, ","), userID)
+				data.InProgress = true
+			}
+
+			data.PlayerCards = makeDisplayHand(playerHand, false)
+			data.PlayerScore = playerScore
+			data.DealerCards = makeDisplayHand(dealerHand, status != "lost") // Если не проиграли, карта скрыта
+			data.Status = status
+			data.Bet = betAmount
+
+		} else if action == "stand" {
+			// Ход дилера
+			playerScore := games.CalculateScore(playerHand)
+			dealerScore := games.CalculateScore(dealerHand)
+
+			// Дилер берет до 17
+			for dealerScore < 17 {
+				dealerHand, deck = games.DrawCard(dealerHand, deck)
+				dealerScore = games.CalculateScore(dealerHand)
+			}
+
+			win := false
+			if dealerScore > 21 {
+				status = "won"
+				win = true
+				data.Message = "Перебор у дилера! Вы выиграли."
+			} else if playerScore > dealerScore {
+				status = "won"
+				win = true
+				data.Message = "Вы победили!"
+			} else if dealerScore > playerScore {
+				status = "lost"
+				data.Message = "Дилер победил."
+			} else {
+				status = "push"
+				data.Message = "Ничья. Ставка возвращена."
+			}
+
+			if win {
+				updateBalance(userID, balance+(betAmount*2))
+				data.Balance = balance + (betAmount * 2)
+				saveBet(userID, betAmount, "Blackjack", true)
+			} else if status == "push" {
+				updateBalance(userID, balance+betAmount)
+				data.Balance = balance + betAmount
+			} else {
+				saveBet(userID, betAmount, "Blackjack", false)
+			}
+
+			db.DB.Exec("DELETE FROM blackjack_games WHERE user_id = $1", userID)
+
+			data.PlayerCards = makeDisplayHand(playerHand, false)
+			data.PlayerScore = playerScore
+			data.DealerCards = makeDisplayHand(dealerHand, false) // Открываем все карты
+			data.DealerScore = dealerScore
+			data.Status = status
+			data.Bet = betAmount
+		}
+
+		renderBlackjackPage(w, data)
+		return
+	}
+
+	// По умолчанию, если ничего не подошло
+	http.Redirect(w, r, "/play/blackjack", http.StatusSeeOther)
+}
 func playRouletteHandler(w http.ResponseWriter, r *http.Request) {
 	userID, balance, err := getUserIDAndBalance(r)
 	if err != nil {
