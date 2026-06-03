@@ -7,12 +7,9 @@ import (
 	"fmt"
 	"html/template"
 	"log"
-	_ "log"
-	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type slotsPageData struct {
@@ -70,21 +67,6 @@ func indexHandler(w http.ResponseWriter, _ *http.Request) {
 	err = tmpl.ExecuteTemplate(w, "base", nil)
 	if err != nil {
 		http.Error(w, "Ошибка выполнения", http.StatusInternalServerError)
-		return
-	}
-}
-
-// обработчик кнопки "Играть"
-
-func playHandler(w http.ResponseWriter, _ *http.Request) {
-	rand.Seed(time.Now().UnixNano())
-	result := "Проигрыш 😢"
-	if rand.Intn(2) == 0 {
-		result = "Победа 🎉"
-	}
-	_, err := fmt.Fprintln(w, result)
-	if err != nil {
-		http.Error(w, "Ошибка вывода ответа", http.StatusInternalServerError)
 		return
 	}
 }
@@ -454,7 +436,8 @@ func playBlackjackHandler(w http.ResponseWriter, r *http.Request) {
 		dealerHand := parseHand(dealerHandStr)
 		deck := parseHand(deckStr)
 
-		if action == "hit" {
+		switch action {
+		case "hit":
 			playerHand, deck = games.DrawCard(playerHand, deck)
 			playerScore := games.CalculateScore(playerHand)
 
@@ -476,7 +459,7 @@ func playBlackjackHandler(w http.ResponseWriter, r *http.Request) {
 			data.Status = status
 			data.Bet = betAmount
 
-		} else if action == "stand" {
+		case "stand":
 			// Ход дилера
 			playerScore := games.CalculateScore(playerHand)
 			dealerScore := games.CalculateScore(dealerHand)

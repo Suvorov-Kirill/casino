@@ -1,0 +1,55 @@
+{{define "content"}}
+
+<div class="panel-wrapper">
+
+    <div class="system-panel" style="width: 1000px;">
+
+        <div class="scanline"></div>
+
+        <div class="panel-title">
+            BETS DATABASE
+        </div>
+
+        <table class="users-table">
+
+            <tr>
+                <th>ID</th>
+                <th>USER</th>
+                <th>AMOUNT</th>
+                <th>GAME</th>
+                <th>RESULT</th>
+                <th>CREATED AT</th>
+            </tr>
+
+            {{range .}}
+
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Username}}</td>
+                <td>{{.Amount}}</td>
+                <td>{{.Game}}</td>
+                <td>{{if .Result}}WIN{{else}}LOSE{{end}}</td>
+                <td>{{.CreatedAt}}</td>
+            </tr>
+
+            {{end}}
+
+        </table>
+
+        <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <a href="/admin/users" class="btn-embedded"
+                style="display:flex; align-items:center; justify-content:center;">
+                НАЗАД
+            </a>
+
+            <a href="/admin/bets" class="btn-embedded"
+                style="display:flex; align-items:center; justify-content:center;">
+                ОБНОВИТЬ
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{{end}}
