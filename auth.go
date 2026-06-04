@@ -3,7 +3,6 @@ package main
 import (
 	"casino/db"
 	"database/sql"
-	_ "database/sql"
 	"errors"
 	"fmt"
 	"html/template"

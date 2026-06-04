@@ -219,3 +219,44 @@
         letter-spacing: 0.18em;
     }
 }
+/* =========================================================
+   ИСПРАВЛЕННАЯ ОБЕРТКА ДЛЯ НИЖНИХ КНОПОК
+========================================================= */
+
+.user-buttons-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    /* Выравнивание по центру или краю (зависит от того, как стоят верхние кнопки) */
+    align-items: center;
+
+    gap: 12px;
+
+    /* Отступ всей группы от верхних кнопок игр */
+    margin-top: 16px;
+}
+
+/* Слой для картинки */
+.user-buttons-bg {
+    position: absolute;
+
+
+    top: -26px;
+    bottom: -26px;
+    left: -54px;
+    right: -54px;
+
+    background-image: url('/static/pr6.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    opacity: 0.4;
+    z-index: -1;
+    pointer-events: none;
+
+    border: 10px solid rgba(209, 33, 33, 0.82);
+    border-radius: 40px;
+}

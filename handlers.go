@@ -3,175 +3,11 @@ package main
 import (
 	"casino/db"
 	"casino/games"
-	"errors"
 	"fmt"
-	"html/template"
-	"log"
-	_ "log"
-	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 )
-
-type slotsPageData struct {
-	Balance int
-	Result  string
-	Win     bool
-	Message string
-}
-
-type crapsPageData struct {
-	Balance    int
-	Point      int
-	InProgress bool
-	Message    string
-	Win        bool
-}
-
-type roulettePageData struct {
-	Balance     int
-	Message     string
-	Win         bool
-	HasResult   bool
-	ResultText  string
-	ResultClass string
-	BetKind     string
-	BetChoice   string
-	BetAmount   int
-}
-type CardDisplay struct {
-	Rank  string
-	Suit  string
-	Color string
-}
-
-type blackjackPageData struct {
-	Balance     int
-	Message     string
-	Status      string // "playing", "won", "lost", "push", "blackjack"
-	PlayerCards []CardDisplay
-	PlayerScore int
-	DealerCards []CardDisplay
-	DealerScore int
-	InProgress  bool
-	Bet         int
-}
-
-// обработчик главной страницы
-func indexHandler(w http.ResponseWriter, _ *http.Request) {
-	tmpl, err := template.ParseFiles("templates/layout.html", "templates/index.html")
-	if err != nil {
-		http.Error(w, "Шаблон главной страницы не найден", http.StatusInternalServerError)
-		return
-	}
-
-	err = tmpl.ExecuteTemplate(w, "base", nil)
-	if err != nil {
-		http.Error(w, "Ошибка выполнения", http.StatusInternalServerError)
-		return
-	}
-}
-
-// обработчик кнопки "Играть"
-
-func playHandler(w http.ResponseWriter, _ *http.Request) {
-	rand.Seed(time.Now().UnixNano())
-	result := "Проигрыш 😢"
-	if rand.Intn(2) == 0 {
-		result = "Победа 🎉"
-	}
-	_, err := fmt.Fprintln(w, result)
-	if err != nil {
-		http.Error(w, "Ошибка вывода ответа", http.StatusInternalServerError)
-		return
-	}
-}
-
-func getUserIDAndBalance(r *http.Request) (userID int, balance int, err error) {
-	cookie, err := r.Cookie("user_id")
-	if err != nil {
-		return 0, 0, err
-	}
-
-	userID, err = strconv.Atoi(cookie.Value)
-	if err != nil {
-		return 0, 0, err
-	}
-
-	err = db.DB.QueryRow("SELECT coins FROM users WHERE id = $1", userID).Scan(&balance)
-	if err != nil {
-		return 0, 0, err
-	}
-
-	return userID, balance, nil
-}
-
-func updateBalance(userID, newBalance int) error {
-	_, err := db.DB.Exec("UPDATE users SET coins = $1 WHERE id = $2", newBalance, userID)
-	return err
-}
-
-func renderSlotsPage(w http.ResponseWriter, data slotsPageData) {
-	tmpl, err := template.ParseFiles("templates/layout.html", "templates/play_slots.html")
-	if err != nil {
-		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
-		log.Println("Template parse error:", err)
-		return
-	}
-
-	err = tmpl.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
-		log.Println("Template execute error:", err)
-	}
-}
-
-func renderCrapsPage(w http.ResponseWriter, data crapsPageData) {
-	tmpl, err := template.ParseFiles("templates/layout.html", "templates/play_craps.html")
-	if err != nil {
-		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
-		log.Println("Template parse error:", err)
-		return
-	}
-
-	err = tmpl.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
-		log.Println("Template execute error:", err)
-	}
-}
-
-func renderRoulettePage(w http.ResponseWriter, data roulettePageData) {
-	tmpl, err := template.ParseFiles("templates/layout.html", "templates/roulette.html")
-	if err != nil {
-		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
-		log.Println("Template parse error:", err)
-		return
-	}
-
-	err = tmpl.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
-		log.Println("Template execute error:", err)
-	}
-}
-
-func saveBet(userID, bet int, game string, win bool) error {
-	_, err := db.DB.Exec(
-		"INSERT INTO bets (user_id, amount, game, result) VALUES ($1, $2, $3, $4)",
-		userID, bet, game, win,
-	)
-	return err
-}
-
-func writeResponse(w http.ResponseWriter, msg string) {
-	_, err := fmt.Fprintln(w, msg)
-	if err != nil {
-		http.Error(w, "Ошибка при отправке ответа клиенту", http.StatusInternalServerError)
-	}
-}
 
 func playSlotsHandler(w http.ResponseWriter, r *http.Request) {
 	userID, balance, err := getUserIDAndBalance(r)
@@ -233,14 +69,6 @@ func playSlotsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderSlotsPage(w, data)
-}
-
-func deductBet(userID, balance, bet int) error {
-	if bet > balance {
-		return errors.New("недостаточно монет")
-	}
-	_, err := db.DB.Exec("UPDATE users SET coins = $1 WHERE id = $2", balance-bet, userID)
-	return err
 }
 
 func playCrapsHandler(w http.ResponseWriter, r *http.Request) {
@@ -327,16 +155,6 @@ func playCrapsHandler(w http.ResponseWriter, r *http.Request) {
 		data.InProgress = game.InProgress
 		renderCrapsPage(w, data)
 	}
-}
-
-func renderBlackjackPage(w http.ResponseWriter, data blackjackPageData) {
-	tmpl, err := template.ParseFiles("templates/layout.html", "templates/play_blackjack.html")
-	if err != nil {
-		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
-		log.Println("Template parse error:", err)
-		return
-	}
-	tmpl.ExecuteTemplate(w, "base", data)
 }
 
 func parseHand(handStr string) []string {
@@ -454,7 +272,8 @@ func playBlackjackHandler(w http.ResponseWriter, r *http.Request) {
 		dealerHand := parseHand(dealerHandStr)
 		deck := parseHand(deckStr)
 
-		if action == "hit" {
+		switch action {
+		case "hit":
 			playerHand, deck = games.DrawCard(playerHand, deck)
 			playerScore := games.CalculateScore(playerHand)
 
@@ -476,7 +295,7 @@ func playBlackjackHandler(w http.ResponseWriter, r *http.Request) {
 			data.Status = status
 			data.Bet = betAmount
 
-		} else if action == "stand" {
+		case "stand":
 			// Ход дилера
 			playerScore := games.CalculateScore(playerHand)
 			dealerScore := games.CalculateScore(dealerHand)

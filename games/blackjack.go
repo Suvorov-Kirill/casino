@@ -32,12 +32,13 @@ func CalculateScore(hand []string) int {
 			continue
 		}
 		rank := card[1:]
-		if rank == "A" {
+		switch rank {
+		case "A":
 			aces++
 			score += 11
-		} else if rank == "K" || rank == "Q" || rank == "J" || rank == "T" {
+		case "K", "Q", "J", "T":
 			score += 10
-		} else {
+		default:
 			val, _ := strconv.Atoi(rank)
 			score += val
 		}

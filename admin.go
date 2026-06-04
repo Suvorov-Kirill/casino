@@ -4,11 +4,9 @@ import (
 	"casino/db"
 	"casino/models"
 	"database/sql"
-	_ "database/sql"
 	"errors"
 	"html/template"
 	"log"
-	_ "log"
 	"net/http"
 )
 
@@ -73,14 +71,60 @@ func adminUsersHandler(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles("templates/admin_users.html")
-	tmpl, err = template.ParseFiles("templates/layout.html", "templates/admin_users.html")
+	// Disable caching for admin pages so browsers always fetch fresh data
+	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate")
+
+	tmpl, err := template.ParseFiles("templates/layout.html", "templates/admin_users.html")
 	if err != nil {
 		http.Error(w, "Template parse error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = tmpl.ExecuteTemplate(w, "base", users)
+	if err != nil {
+		http.Error(w, "Template execute error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func adminBetsHandler(w http.ResponseWriter, _ *http.Request) {
+	// Prevent browser caching so admin sees latest bets
+	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate")
+
+	rows, err := db.DB.Query("SELECT b.id, b.user_id, u.username, b.amount, b.game, b.result, b.created_at FROM bets b LEFT JOIN users u ON u.id = b.user_id ORDER BY b.created_at DESC LIMIT 15")
+	if err != nil {
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Printf("rows.Close() error: %v", cerr)
+		}
+	}()
+
+	var bets []models.Bet
+	for rows.Next() {
+		var b models.Bet
+		err := rows.Scan(&b.ID, &b.UserID, &b.Username, &b.Amount, &b.Game, &b.Result, &b.CreatedAt)
+		if err != nil {
+			http.Error(w, "Database scan error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		bets = append(bets, b)
+	}
+
+	if err := rows.Err(); err != nil {
+		http.Error(w, "Rows iteration error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tmpl, err := template.ParseFiles("templates/layout.html", "templates/admin_bets.html")
+	if err != nil {
+		http.Error(w, "Template parse error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.ExecuteTemplate(w, "base", bets)
 	if err != nil {
 		http.Error(w, "Template execute error: "+err.Error(), http.StatusInternalServerError)
 		return
