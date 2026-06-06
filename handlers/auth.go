@@ -1,7 +1,7 @@
-package main
+package handlers
 
 import (
-	"casino/db"
+	"casino/app"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -19,7 +19,7 @@ type authPageData struct {
 	IsSuccess bool
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
+func LoginHandler(a *app.CasinoApp, w http.ResponseWriter, r *http.Request) {
 	renderLoginPage := func(data authPageData) {
 		tmpl, err := template.ParseFiles("templates/layout.html", "templates/login.html")
 		if err != nil {
@@ -51,7 +51,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var storedHash string
 	var id int
-	err := db.DB.QueryRow("SELECT id, password FROM users WHERE username = $1", username).Scan(&id, &storedHash)
+	err := a.DB.QueryRow("SELECT id, password FROM users WHERE username = $1", username).Scan(&id, &storedHash)
 	if errors.Is(err, sql.ErrNoRows) {
 		renderLoginPage(authPageData{
 			Username: username,
@@ -90,7 +90,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func registerHandler(w http.ResponseWriter, r *http.Request) {
+func RegisterHandler(app *app.CasinoApp, w http.ResponseWriter, r *http.Request) {
 	renderRegisterPage := func(data authPageData) {
 		tmpl, err := template.ParseFiles("templates/layout.html", "templates/register.html")
 		if err != nil {
@@ -131,7 +131,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Добавляем пользователя
-		_, err = db.DB.Exec("INSERT INTO users (username, password, coins) VALUES ($1, $2, $3)",
+		_, err = app.DB.Exec("INSERT INTO users (username, password, coins) VALUES ($1, $2, $3)",
 			username, string(hashedPassword), 100, // начальный баланс
 		)
 		if err != nil {
@@ -159,7 +159,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func profileHandler(w http.ResponseWriter, r *http.Request) {
+func ProfileHandler(app *app.CasinoApp, w http.ResponseWriter, r *http.Request) {
 	// Проверяем cookie
 	cookie, err := r.Cookie("user_id")
 	if err != nil {
@@ -171,7 +171,7 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	// Получаем данные пользователя из базы
 	var username string
 	var coins int
-	err = db.DB.QueryRow("SELECT username, coins FROM users WHERE id = $1::int", userID).Scan(&username, &coins)
+	err = app.DB.QueryRow("SELECT username, coins FROM users WHERE id = $1::int", userID).Scan(&username, &coins)
 	if errors.Is(err, sql.ErrNoRows) {
 		http.Error(w, "Пользователь не найден", http.StatusNotFound)
 		return

@@ -1,7 +1,7 @@
-package main
+package handlers
 
 import (
-	"casino/db"
+	"casino/app"
 	"casino/models"
 	"database/sql"
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func requireAdmin(next http.HandlerFunc) http.HandlerFunc {
+func RequireAdmin(app *app.CasinoApp, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// Получаем cookie с user_id
@@ -22,7 +22,7 @@ func requireAdmin(next http.HandlerFunc) http.HandlerFunc {
 
 		// Получаем роль пользователя из базы
 		var userRole string
-		err = db.DB.QueryRow("SELECT user_role FROM users WHERE id = $1::int", cookie.Value).Scan(&userRole)
+		err = app.DB.QueryRow("SELECT user_role FROM users WHERE id = $1::int", cookie.Value).Scan(&userRole)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -42,8 +42,8 @@ func requireAdmin(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func adminUsersHandler(w http.ResponseWriter, _ *http.Request) {
-	rows, err := db.DB.Query("SELECT id, username, coins, user_role FROM users")
+func AdminUsersHandler(app *app.CasinoApp, w http.ResponseWriter, _ *http.Request) {
+	rows, err := app.DB.Query("SELECT id, username, coins, user_role FROM users")
 	if err != nil {
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -87,11 +87,11 @@ func adminUsersHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func adminBetsHandler(w http.ResponseWriter, _ *http.Request) {
+func AdminBetsHandler(app *app.CasinoApp, w http.ResponseWriter, _ *http.Request) {
 	// Prevent browser caching so admin sees latest bets
 	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate")
 
-	rows, err := db.DB.Query("SELECT b.id, b.user_id, u.username, b.amount, b.game, b.result, b.created_at FROM bets b LEFT JOIN users u ON u.id = b.user_id ORDER BY b.created_at DESC LIMIT 15")
+	rows, err := app.DB.Query("SELECT b.id, b.user_id, u.username, b.amount, b.game, b.result, b.created_at FROM bets b LEFT JOIN users u ON u.id = b.user_id ORDER BY b.created_at DESC LIMIT 15")
 	if err != nil {
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -131,10 +131,10 @@ func adminBetsHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func adminDeleteUser(w http.ResponseWriter, r *http.Request) {
+func AdminDeleteUser(app *app.CasinoApp, w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
-	_, err := db.DB.Exec("DELETE FROM users WHERE id = $1::int", id)
+	_, err := app.DB.Exec("DELETE FROM users WHERE id = $1::int", id)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -143,14 +143,14 @@ func adminDeleteUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/admin/users", http.StatusSeeOther)
 }
 
-func adminEditUser(w http.ResponseWriter, r *http.Request) {
+func AdminEditUser(app *app.CasinoApp, w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	if r.Method == http.MethodPost {
 		coins := r.FormValue("coins")
 		userRole := r.FormValue("user_role")
 
-		_, err := db.DB.Exec("UPDATE users SET coins = $1, user_role = $2 WHERE id = $3::int", coins, userRole, id)
+		_, err := app.DB.Exec("UPDATE users SET coins = $1, user_role = $2 WHERE id = $3::int", coins, userRole, id)
 		if err != nil {
 			http.Error(w, "Database update error: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -161,7 +161,7 @@ func adminEditUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var u models.User
-	err := db.DB.QueryRow("SELECT id, username, coins, user_role FROM users WHERE id = $1::int", id).Scan(
+	err := app.DB.QueryRow("SELECT id, username, coins, user_role FROM users WHERE id = $1::int", id).Scan(
 		&u.ID, &u.Email, &u.Balance, &u.Role,
 	)
 	if err != nil {

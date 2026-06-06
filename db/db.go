@@ -10,21 +10,19 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var DB *sql.DB
-
-func Init() {
+func Init() *sql.DB {
 	var err error
 	dsn := os.Getenv("DATABASE_URL")
 	if dsn == "" {
 		dsn = "postgres://postgres:postgres@localhost:5432/casino?sslmode=disable"
 	}
 
-	DB, err = sql.Open("pgx", dsn)
+	dbInstance, err := sql.Open("pgx", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := DB.Ping(); err != nil {
+	if err := dbInstance.Ping(); err != nil {
 		log.Fatal("Не удалось подключиться к PostgreSQL:", err)
 	}
 
@@ -41,20 +39,12 @@ func Init() {
 			continue
 		}
 
-		if _, err := DB.Exec(statement); err != nil {
+		if _, err := dbInstance.Exec(statement); err != nil {
 			log.Fatal("Не могу выполнить SQL из schema.sql:", err)
 		}
 	}
 
 	fmt.Println("Структура базы данных загружена.")
-}
 
-func Close() {
-	if DB == nil {
-		return
-	}
-
-	if err := DB.Close(); err != nil {
-		log.Println("Ошибка при закрытии базы:", err)
-	}
+	return dbInstance
 }

@@ -1,7 +1,7 @@
 package games
 
 import (
-	"casino/db"
+	"casino/app"
 	"math/rand"
 )
 
@@ -42,7 +42,7 @@ func (g *CrapsGame) ProcessPointRoll(sum int) string {
 	return "continue"
 }
 
-func FinishCrapsGame(userID int, win bool) {
+func FinishCrapsGame(a *app.CasinoApp, userID int, win bool) {
 	game := CrapsGames[userID]
 	game.InProgress = false
 	game.Point = 0
@@ -50,10 +50,10 @@ func FinishCrapsGame(userID int, win bool) {
 	game.Bet = 0
 
 	if win {
-		db.DB.Exec("UPDATE users SET coins = coins + $1 WHERE id = $2", bet*2, userID)
+		a.DB.Exec("UPDATE users SET coins = coins + $1 WHERE id = $2", bet*2, userID)
 	}
 
-	db.DB.Exec(
+	a.DB.Exec(
 		"INSERT INTO bets (user_id, amount, game, result) VALUES ($1, $2, 'Craps', $3)",
 		userID, bet, win)
 }

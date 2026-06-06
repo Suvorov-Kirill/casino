@@ -1,4 +1,4 @@
-package main
+package views
 
 import (
 	"html/template"
@@ -6,14 +6,14 @@ import (
 	"net/http"
 )
 
-type slotsPageData struct {
+type SlotsPageData struct {
 	Balance int
 	Result  string
 	Win     bool
 	Message string
 }
 
-type crapsPageData struct {
+type CrapsPageData struct {
 	Balance    int
 	Point      int
 	InProgress bool
@@ -21,7 +21,7 @@ type crapsPageData struct {
 	Win        bool
 }
 
-type roulettePageData struct {
+type RoulettePageData struct {
 	Balance     int
 	Message     string
 	Win         bool
@@ -38,7 +38,7 @@ type CardDisplay struct {
 	Color string
 }
 
-type blackjackPageData struct {
+type BlackjackPageData struct {
 	Balance     int
 	Message     string
 	Status      string // "playing", "won", "lost", "push", "blackjack"
@@ -51,7 +51,7 @@ type blackjackPageData struct {
 }
 
 // обработчик главной страницы
-func indexHandler(w http.ResponseWriter, _ *http.Request) {
+func IndexHandler(w http.ResponseWriter, _ *http.Request) {
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/index.html")
 	if err != nil {
 		http.Error(w, "Шаблон главной страницы не найден", http.StatusInternalServerError)
@@ -65,7 +65,7 @@ func indexHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func renderSlotsPage(w http.ResponseWriter, data slotsPageData) {
+func RenderSlotsPage(w http.ResponseWriter, data SlotsPageData) {
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/play_slots.html")
 	if err != nil {
 		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
@@ -80,7 +80,7 @@ func renderSlotsPage(w http.ResponseWriter, data slotsPageData) {
 	}
 }
 
-func renderCrapsPage(w http.ResponseWriter, data crapsPageData) {
+func RenderCrapsPage(w http.ResponseWriter, data CrapsPageData) {
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/play_craps.html")
 	if err != nil {
 		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
@@ -95,7 +95,7 @@ func renderCrapsPage(w http.ResponseWriter, data crapsPageData) {
 	}
 }
 
-func renderRoulettePage(w http.ResponseWriter, data roulettePageData) {
+func RenderRoulettePage(w http.ResponseWriter, data RoulettePageData) {
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/roulette.html")
 	if err != nil {
 		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
@@ -110,7 +110,7 @@ func renderRoulettePage(w http.ResponseWriter, data roulettePageData) {
 	}
 }
 
-func renderBlackjackPage(w http.ResponseWriter, data blackjackPageData) {
+func RenderBlackjackPage(w http.ResponseWriter, data BlackjackPageData) {
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/play_blackjack.html")
 	if err != nil {
 		http.Error(w, "Ошибка при отображении шаблона", http.StatusInternalServerError)
